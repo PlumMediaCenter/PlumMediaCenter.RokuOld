@@ -8,21 +8,13 @@ Function Main()
     screenFacade = CreateObject("roGridScreen")
     screenFacade.show()
     
-    if compareVersionWithServer() = false
-        screenFacade.close()
-        sleep(25)
-        return true
-    end if
-     
-    'Check the app configuration. If not configured, prompt the user for all necessary information
-    CheckConfiguration()
-    
+    'make sure we have a url to the server
+     CheckConfiguration()
+         
     'make sure that the server specified in the configuration actually exists
     print "Verifying that the server exists."
     messageScreen = GetNewMessageScreen("", "Verifying that the server exists at the provided url...")
     serverExists = API_ServerExists() 
-    messageScreen.close()
-    
     If serverExists = False Then 
         confirmResult = Confirm("Unable to find PlumVideoPlayer server at the following url. Would you like to update the url? '" + BaseUrl() + "'", "Yes", "No")
         If ConfirmResult = True Then
@@ -32,6 +24,21 @@ Function Main()
             print "The user does NOT want to fix the broken url. Continue as if the server was working"
         End If
     End If
+    messageScreen.close()
+    
+    'we know that the server exists....but now make sure that our version and the server's version are compatible
+    messageScreen = GetNewMessageScreen("", "Verifying that the app is compatible with the current version of the server")
+   
+    messageScreen.close()
+    if compareVersionWithServer() = false
+        messageScreen.close()
+        screenFacade.close()
+        sleep(25)
+        return true
+    end if
+    messageScreen.close()
+
+    
     
     'Show the video grid
     ShowVideoGrid()
@@ -49,29 +56,63 @@ End Function
 ' @return {boolean} - true if the application could keep processing, false if it should exit
 '''
 function compareVersionWithServer()
+    exitValue = false
     appVersion = APP_VERSION_NUMBER()
     appVersionParts = appVersion.Tokenize(".")
+    appMajor = Val(appVersionParts[0])
+    appMinor = Val(appVersionParts[1])
+    
     serverVersion = API_GetServerVersionNumber()
     serverVersionParts = serverVersion.Tokenize(".")
+    serverMajor = Val(serverVersionParts[0])
+    serverMinor = Val(serverVersionParts[1])
+
     print concat("Comparing app version and server version: ", appVersion, " --- ", serverVersion)
-    print concat( Val(appVersionParts[0]), " < ",Val(serverVersionParts[0]), " or ", Val(appVersionParts[1]) ," < ", Val(serverVersionParts[1]))
-    print concat( Val(serverVersionParts[0]), " < ",Val(appVersionParts[0]), " or ", Val(serverVersionParts[1]) ," < ", Val(appVersionParts[1]))
+    print concat(appMajor, " < ",serverMajor, " or ",appMinor ," < ",serverMinor)
+    print concat( serverMajor, " < ",appMajor, " or ", serverMinor ," < ", appMinor)
     'if app is behind the server
-    if appVersionParts[0] < serverVersionParts[0] or appVersionParts[1] < serverVersionParts[0]
+    if appMajor < serverMajor or appMinor < serverMinor
         print "app is behind server"
         'app is behind the server
-        result = Confirm("The server has a higher version than this app can handle. Please go to Settings > System Update to get the latest version of this app","I don't care. Proceed","Exit")
-   'if the server is behind the app
-
-    else if Val(serverVersionParts[0]) < Val(appVersionParts[0]) or Val(serverVersionParts[1]) < Val( appVersionParts[1])
+        result = Confirm("The server has a higher version than this app can handle. Please go to Settings > System Update to get the latest version of this app","Continue at my own risk","Exit")
+        exitValue = result
+    'if the server is behind the app
+    else if serverMajor < appMajor or serverMinor <appMinor
         print "server is behind app"
         'server is behind the app
-        result = ConfirmWithCancel("The server has a lower version than this app can handle. Would you like to have the server check for updates now?","Yes, update the server now","Don't update the server but launch the app", "Don't update the server and exit the app")
+        result = ConfirmWithCancel("The server has a lower version than this app can handle. Would you like to have the server check for updates now (this may take several minutes)?","Yes, update the server now","Don't update the server but launch the app", "Don't update the server and exit the app")
+        if result = 1
+            updatingScreen = GetNewMessageScreen("", "Updating server")
+            'get the current server version
+            updateSuccess = API_UpdateServer()
+            updatingScreen.close()
+            'the server threw an error
+            if updateSuccess = false 
+                b_alert("There was an error updating the server")
+                exitValue = false
+            else
+                updatedServerVersion = API_GetServerVersionNumber()
+                'the server succeeded. see if it actually found any updates
+                if serverVersion = updatedServerVersion
+                    b_alert("The server found no updates to install")
+                    exitValue = true
+                else
+                    'the server updated to a new version
+                    b_alert(b_concat("Server was successfully updated from version ", serverVersion, " to version ", updatedServerVersion))
+                    exitValue = true
+               end if
+            end if
+        else if result = 0
+            exitValue = true
+        else if result = -1
+           exitValue = false
+        end if
     'the app and the server are within the same major/minor versions of each other. everything is ok
     else
         print "app and server are at the same major-minor version"
-        return true
+        exitValue = true
     end if
+    return exitValue
 end function
 
 '
@@ -115,99 +156,6 @@ Sub LoadLibrary()
     m.lib = lib
 End Sub
 
-Function ShowTvEpisodesGrid(tvShowVideoId as Integer)
-    print "Show tv episodes"
-    messageScreen =  GetNewMessageScreen("", "Retrieving tv episodes...")
-    port = CreateObject("roMessagePort")
-    If m.episodeScreen = invalid Then
-        m.episodeScreen = CreateObject("roPosterScreen")
-    End If     
-    show = API_GetTvShow(tvShowVideoId)    
-    'get the video id of the video that should be focused in the episode grid as the one to watch
-    nextEpisodeVideoId = API_GetNextEpisodeId(show.videoId)
-    
-    eScreen = m.episodeScreen
-    eScreen.SetMessagePort(port) 
-    episodeList = []
-   
-    'these two should be populated if there is a tv episode that should be played next. otherwise, it defaults to the first episode in the list
-    nextEpisodeIndex = 0
-    episodeIndex = 0 
-    For Each episode in show.episodes
-        'if this is the episode to watch, save its position for later when we create the grid
-        If episode.videoId = nextEpisodeVideoId Then
-            nextEpisodeIndex = episodeIndex
-        End If
-       runtime = invalid
-       If episode.runtime > 0 Then
-            episodeRuntimeMinutes = episode.runtime / 60
-            if episodeRuntimeMinutes <= 1
-                runtime = "Less than 1 minute"
-            else
-                runtime = concat(episodeRuntimeMinutes, " minutes")
-            end if
-        End If
-        o = CreateObject("roAssociativeArray")
-        
-        o.ContentType = "movie"
-        o.Title = cstr(episode.episodeNumber) + ". " + cstr(episode.title)
-        o.SDPosterUrl = episode.sdPosterUrl
-        o.HDPosterUrl = episode.hdPosterUrl
-        o.ShortDescriptionLine1 = concat("S", episode.seasonNumber,":E", cstr(episode.episodeNumber).trim()," - ", episode.title)
-        
-        o.Description = episode.plot
-        o.Rating = episode.mpaa
-        'o.StarRating = "75"
-        o.ReleaseDate = episode.year
-        'o.EpisodeNumber = episode.seasonNumber.ToStr()  + ":" +  episode.episodeNumber.ToStr()
-        if runtime <> invalid then
-            'o.Length = runtimeStr
-            o.ShortDescriptionLine2 =  runtime
-        end if
-        o.Actors = []
-        o.url = episode.url
-        o.videoId = episode.videoId
-        For Each actor in episode.actorList
-            name = actor.name
-            o.Actors.push(name)
-        End For
-        o.Director = "[Director]"
-        episodeList.Push(o)
-        episodeIndex = episodeIndex + 1
-    End For
-   
-   'add the list of episodes to the posterScreen
-    eScreen.SetContentList(episodeList)
-    'set the grid to wide so the episode pictures look better
-    eScreen.SetListStyle("flat-episodic-16x9")
-    eScreen.SetListDisplayMode("scale-to-fit")
-    eScreen.SetBreadcrumbText(show.title, "")
-    'focus the grid on the episode that was marked as 'next'. 
-    print "Next Episode grid indexes:: ";nextEpisodeIndex 
-    eScreen.SetFocusedListItem(nextEpisodeIndex)    
-    'hide the message
-    messageScreen.Close()
-    print "show episode screen"
-    eScreen.Show() 
-    episodeIndex = -1
-    while true
-        msg = wait(0, port)
-        If msg.isScreenClosed() then
-            m.episodeScreen = invalid
-            Return -1
-        Else If msg.isListItemFocused()
-            print "Focused msg: ";msg.GetMessage();"row: ";msg.GetIndex();
-            print " col: ";msg.GetData()
-         Else If msg.isListItemSelected()
-            print "Selected Episode Index: ";msg.GetIndex()
-            episodeIndex = msg.GetIndex()
-            episode = episodeList[episodeIndex]
-            PlayVideo(episode)
-            'whenever the video has finished playing, reload this grid
-            Return ShowTvEpisodesGrid(tvShowVideoId) 
-        End If
-    End While
-End Function
 
 Sub PlayVideo(pVideo as Object)
     

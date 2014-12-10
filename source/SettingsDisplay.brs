@@ -21,14 +21,14 @@ Function GetBaseUrlFromUser() as Dynamic
     serverUrl = BaseUrl()
     'if the server url is not set in the registry, use a default value
     If serverUrl = invalid Then
-        serverUrl = "http://192.168.1.167:8080/PlumVideoPlayer/Web/"
+        serverUrl = "http://192.168.1.10:8080/PlumMediaCenter/"
     End If
     'set the default value of the keyboard screen
     screen.SetText(serverUrl)
     port = CreateObject("roMessagePort") 
     screen.SetMessagePort(port)
     screen.SetTitle("PlumVideoPlayer Web URL")
-    screen.SetDisplayText("Enter the url for the PlumVideoPlayer API.")
+    screen.SetDisplayText("Enter the url for the server running PlumMediaCenter.")
     screen.SetMaxLength(800)
     screen.AddButton(1, "Ok")
     screen.AddButton(2, "Cancel")
@@ -43,6 +43,12 @@ Function GetBaseUrlFromUser() as Dynamic
              Else If msg.isButtonPressed() then
                  If msg.GetIndex() = 1
                     sBaseUrl = screen.GetText()
+                    'if the base url is missing the ending slash, add it
+                    endingCharacter = sBaseUrl.Right(1)
+                    print b_concat("ending character: ", endingCharacter)
+                    if endingCharacter <> "/"
+                        sBaseUrl = b_concat(sBaseUrl, "/")
+                    end if
                     'save the base url to the registry
                     SetBaseUrl(sBaseUrl)
                     print "User said that the PlumVideoPlayer url was ";sBaseUrl

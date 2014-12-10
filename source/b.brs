@@ -65,6 +65,38 @@ Function b_isValid(value As Dynamic) As Boolean
     Return Type(value) <> "<uninitialized>" And value <> invalid
 End Function
 
+
+'
+' Shows the user a message and waits until they click ok
+Sub b_alert(message as string) 
+    print "Alerting: '" + message + "'"
+    port = CreateObject("roMessagePort")
+    dialog = CreateObject("roMessageDialog")
+    dialog.SetMessagePort(port) 
+    'dialog.SetTitle(messageTitle)
+    dialog.SetText(message)
+ 
+    dialog.AddButton(1, "Ok")
+    dialog.EnableBackButton(false)
+    dialog.Show()
+    While True
+        dlgMsg = wait(0, dialog.GetMessagePort())
+        If type(dlgMsg) = "roMessageDialogEvent"
+            if dlgMsg.isButtonPressed()
+                exit while
+            End If
+        End If
+    End While
+End Sub
+
+function b_iff(condition, trueValue, falseValue)
+    if condition = true
+        return trueValue
+    else
+        return falseValue
+    end if
+End Function
+
 '**
 ' Turns the value into a url-safe string (converting invalid characters to their safe representations
 ' @param {string} value - the value to be escaped
@@ -89,6 +121,8 @@ Function b_CStr(item) as String
         result = "invalid"
     else if itemType = "String"
         result = item
+    else if itemType = "roString"
+        result = item.GetString()
     else if itemType = "Boolean"
         result = iff(item, "true", "false")
     else if itemType = "Integer" or itemType = "Float" or itemType = "Double"
@@ -105,3 +139,41 @@ Function b_CStr(item) as String
     end if
     return result
 End Function
+
+Function b_concat(a=invalid,b=invalid,c=invalid,d=invalid,e=invalid,f=invalid,g=invalid,h=invalid,i=invalid,j=invalid,k=invalid,l=invalid)
+    result = ""
+    if a <> invalid
+        result = result + b_cstr(a)
+    end if
+    if b <> invalid
+        result = result + b_cstr(b)
+    end if
+    if c <> invalid
+        result = result + b_cstr(c)
+    end if
+    if d <> invalid
+        result = result + b_cstr(d)
+    end if
+    if e <> invalid
+        result = result + b_cstr(e)
+    end if
+    if f <> invalid
+        result = result + b_cstr(f)
+    end if
+    if g <> invalid
+        result = result + b_cstr(g)
+    end if
+    if h <> invalid
+        result = result + b_cstr(h)
+    end if
+    if i <> invalid
+        result = result + b_cstr(i)
+    end if
+    if j <> invalid
+        result = result + b_cstr(j)
+    end if
+    if k <> invalid
+        result = result + b_cstr(k)
+    end if
+    return result
+End function

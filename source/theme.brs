@@ -7,8 +7,8 @@ Sub SetTheme()
     overhangSliceHD =  "pkg:/images/overhang_hd.png"
     overhangSliceSD =  "pkg:/images/overhang_sd.png"
     greyBackgroundColor = "#363636"
-    GridScreenOverhangHeightHD = "100"
-    GridScreenOverhangHeightSD = "62"
+    GridScreenOverhangHeightHD = "69"
+    GridScreenOverhangHeightSD = "49"
     
     'dark color pattern
     charcoal = "#293647"

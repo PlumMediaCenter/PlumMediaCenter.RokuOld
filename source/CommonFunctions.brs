@@ -80,50 +80,11 @@ Function CStr(item) as String
 End Function
 
 function iff(condition, trueValue, falseValue)
-    if condition = true
-        return trueValue
-    else
-        return falseValue
-    end if
-    
+    return b_iff(condition, trueValue, falseValue)
 End Function
 
 Function Concat(a=invalid,b=invalid,c=invalid,d=invalid,e=invalid,f=invalid,g=invalid,h=invalid,i=invalid,j=invalid,k=invalid,l=invalid)
-    result = ""
-    if a <> invalid
-        result = result + cstr(a)
-    end if
-    if b <> invalid
-        result = result + cstr(b)
-    end if
-    if c <> invalid
-        result = result + cstr(c)
-    end if
-    if d <> invalid
-        result = result + cstr(d)
-    end if
-    if e <> invalid
-        result = result + cstr(e)
-    end if
-    if f <> invalid
-        result = result + cstr(f)
-    end if
-    if g <> invalid
-        result = result + cstr(g)
-    end if
-    if h <> invalid
-        result = result + cstr(h)
-    end if
-    if i <> invalid
-        result = result + cstr(i)
-    end if
-    if j <> invalid
-        result = result + cstr(j)
-    end if
-    if k <> invalid
-        result = result + cstr(k)
-    end if
-    return result
+    return b_concat(a,b,c,d,e,f,g,h,i,j,k,l)
 End function
 
 '
@@ -138,7 +99,7 @@ Sub FireNonBlockingRequest(sUrl as String)
     searchRequest.AsyncGetToString() 
 End Sub
 
-Function GetNewMessageScreen(messageTitle as String, message as String) as Object
+Function GetNewMessageScreen(messageTitle = "", message = "") as Object
     dialog = CreateObject("roMessageDialog")
     dialog.SetTitle(messageTitle)
     dialog.SetText(message)
@@ -210,9 +171,9 @@ End Function
 
 '
 ' Prompts the user for a yes/no/cancel answer, returns the result
-' @return boolean - true if user selects yes, false if user selects no. -1 if the user selects cancel
-Function ConfirmWithCancel(message, yesText as String, noText as String) as Integer
-    print "Confirming: '" + message + "', '" + yesText + "', " + noText + "', 'Cancel'"
+' @return integer  - 1 if the user chooses yes, 0 if the user chooses no, -1 if the user chooses cancel
+Function ConfirmWithCancel(message = "Confirm", yesText  = "Yes", noText  = "No", cancelText = "Cancel") as Integer
+    print b_concat("Confirming: '", message , "', '",yesText, "', ", noText, "', 'Cancel'", cancelText)
     port = CreateObject("roMessagePort")
     dialog = CreateObject("roMessageDialog")
     dialog.SetMessagePort(port) 
@@ -221,7 +182,7 @@ Function ConfirmWithCancel(message, yesText as String, noText as String) as Inte
 
     dialog.AddButton(0, yesText)
     dialog.AddButton(1, noText)
-    dialog.AddButton(2, "Cancel")
+    dialog.AddButton(2, cancelText)
     dialog.EnableBackButton(true)
     dialog.Show()
     While True
@@ -230,13 +191,13 @@ Function ConfirmWithCancel(message, yesText as String, noText as String) as Inte
             if dlgMsg.isButtonPressed()
                 print dlgMsg.getMessage()
                 If dlgMsg.GetIndex() = 0
-                    Return 2
-                End If
-                If dlgMsg.GetIndex() = 1
                     Return 1
                 End If
-                If dlgMsg.GetIndex() = 2
+                If dlgMsg.GetIndex() = 1
                     Return 0
+                End If
+                If dlgMsg.GetIndex() = 2
+                    Return -1
                 End If
             Else If dlgMsg.isScreenClosed()
                 exit while

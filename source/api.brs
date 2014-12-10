@@ -4,8 +4,6 @@
 ' @return Object  - the library object if successful, an empty library object if unsuccessful 
 '
 Function API_GetLibrary() as Object
-    'temporarily override the baseUrl value so we can get it in the registry without hvaing to go over to the roku
-    SetBaseUrl("http://192.168.1.167:8080/PlumVideoPlayer/Web/")
     libraryUrl = BaseUrl() + "api/GetLibrary.php"
     'perform a blocking request to retrieve the library object
 
@@ -15,10 +13,7 @@ Function API_GetLibrary() as Object
     'if the library was not able to be retrieved, make an empty library object
     If (lib = invalid) Then
         print "Failed to successfully fetch library from server. Using empty library object"
-        lib = {
-            movies: [], 
-            tvShows: []
-        }
+        lib =[]
     Else
         print "Retrieved library from server. "
     End if
@@ -70,6 +65,22 @@ Function API_GetTvShow(tvShowVideoId as Integer) as Object
     End If
     return result
 End Function
+
+'
+' Returns an object containing the tv show with the videoId requested, as well as all of the episodes in that show
+'
+Function API_GetTvEpisodes(tvShowVideoId as Integer) as Object
+    url = b_concat(BaseUrl(), "api/GetTvEpisodes.php?videoId=", tvShowVideoId)
+    print "API-GetTvEpisodes: ";url
+    result = GetJson(url)
+    If result <> invalid Then
+        print "API-GetTvEpisodes: showId=";tvShowVideoId;", success"
+    Else
+        print "API-GetTvEpisodes: showId=";tvShowVideoId;", result=invalid"
+    End If
+    return result
+End Function
+
 
 '
 'Get the current second number to start a video at 
@@ -131,7 +142,7 @@ Function API_GetServerVersionNumber() as String
     End If
     
     url = mBaseUrl + "api/GetServerVersionNumber.php"
-    result = Get(url)
+    result = GetJSON(url)
     if result = invalid then
         print "result is invalid"
         result = "0.1.0"
@@ -160,4 +171,16 @@ function API_GetSearchResults(searchString) as Object
     searchResults = GetJSON(url)
     print concat("API-GetSearchResults: number of results found: ", b_size(searchResults))
     return searchResults
+end function
+
+function API_UpdateServer() as Boolean
+    url = concat(BaseUrl(), "api/Update.php")
+    print concat("API-UpdateServer: url: ", url)
+    result = GetJSON(url)
+    print result
+    if result = invalid
+        result = {success: false}
+    end if
+    print result.success
+    return result.success
 end function

@@ -42,12 +42,14 @@ function getSearchSuggestions(searchTerm) as Object
 end function
 
 function loadSearchResults(searchTerm) as object
+    messageScreen = GetNewMessageScreen("", "Searching")
     results = API_GetSearchResults(searchTerm)
     m.searchResults = results
     m.searchTerm = searchTerm
     numberOfResults =  b_size(results)
     print concat("Search results for '",searchTerm,"': count: ",numberOfResults)
     ShowVideoGrid()
+    messageScreen.hide()
 end function
 
     

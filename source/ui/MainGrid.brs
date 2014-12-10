@@ -37,25 +37,21 @@ function MainGrid()
     searchTitle = iff(m.searchTerm <> invalid, concat("Search Results for '", m.searchTerm, "'"), "Search")
     grid.addRow(searchTitle, searchList)
     
-    '
-    'Add Tv Shows
-    '
     tvShowList = []
-    For Each tvShow in m.lib.tvShows
-        tile = TvShowGridTile(tvShow)
-        tvShowList.Push(tile)
-    End For
+    movieList = []
+ 
+    'break the videos out into movies or tv shows
+    for each video in m.lib
+        tile = GetMediaTypeVideoGridTile(video)
+        if video.mediaType = "TvShow"
+           tvShowList.push(tile)
+        else
+            movieList.push(tile)
+        end if
+    end for
+ 
     'add the tv shows to the grid
     grid.addRow("TV Shows", tvShowList)
-
-    '
-    'Add movies
-    '
-    movieList = []
-    For Each video in m.lib.movies
-        tile = VideoGridTile(video)
-        movieList.Push(tile)
-    End For
     'add the movies to the grid
     grid.addRow("Movies", movieList)
     
@@ -64,8 +60,8 @@ function MainGrid()
     '
     settingsList = []
     settingsList.push(GridTile({
-        Title: "Set PlumVideoServer url",
-        Description:"Set the url for the PlumVideoServer that this app will play from.",
+        Title: "Set PlumMediaCenter server url",
+        Description:"Set the url for the PlumMediaCenter server that this app will interact with",
         SDPosterUrl: "pkg:/images/settings.sd.png",
         HDPosterUrl: "pkg:/images/settings.hd.png",
         onSelect: function()
@@ -75,6 +71,8 @@ function MainGrid()
     settingsList.push(GridTile({
         Title: "Refresh Videos",
         Description:"Refresh the page with the latest videos from the server",
+        SDPosterUrl: "pkg:/images/refresh.sd.png",
+        HDPosterUrl: "pkg:/images/refresh.hd.png",
         onSelect: function()
             showSettings(1)
         end function
@@ -82,9 +80,8 @@ function MainGrid()
     settingsList.push(GridTile({
         Title: "Version Number",
         Description:concat("App Version: ", APP_VERSION_NUMBER(), chr(10),"Server Version: ", API_GetServerVersionNumber()),
-        onSelect: function()
-            showSettings(0)
-        end function
+        SDPosterUrl: "pkg:/images/info.sd.png",
+        HDPosterUrl: "pkg:/images/info.hd.png"
     }))
 
     grid.addRow("Settings", settingsList)
@@ -100,7 +97,8 @@ function MainGrid()
     'hide the message screen now that the grid has been shown
     messageScreen.Close()
 
-    selectedTile = invalid
+    'by default, select the search icon since that's the one that is highlighted on page load
+    selectedTile = grid.getItem(0, 0)
     while true
         msg = wait(0, port)
         print "message received";msg

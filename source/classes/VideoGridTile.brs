@@ -1,18 +1,24 @@
 function VideoGridTile(video)
     o = GridTile({
         Title: video.title,
-        SDPosterUrl: video.sdPosterUrl,
-        HDPosterUrl: video.hdPosterUrl,
         Description: video.plot,
         Rating: video.mpaa,
         ReleaseDate: video.year,
         onSelect: function()
+                messageScreen = GetNewMessageScreen("Loading", "Playing video")
                 PlayVideo(m.video)
+                messageScreen.close()
             end function,
         onPlay: function()
+                messageScreen = GetNewMessageScreen("Loading", "Playing video")
                 PlayVideo(m.video)
+                messageScreen.close()
             end function
     })
+    
+    'if the video has no poster, then the poster url is pointing to a relative path to the server.
+    o.SDPosterUrl = b_iff(video.posterModifiedDate = invalid, b_concat(BaseUrl(), video.sdPosterUrl), video.sdPosterUrl)
+    o.HDPosterUrl = b_iff(video.posterModifiedDate = invalid, b_concat(BaseUrl(), video.hdPosterUrl), video.hdPosterUrl)
     o.video = video
     o.videoId = video.videoId
     return o
@@ -23,6 +29,8 @@ function GetMediaTypeVideoGridTile(video)
     if video.mediaType = "TvShow"
         return TvShowGridTile(video)
     else if video.mediaType = "TvEpisode"
+        return VideoGridTile(video)
+    else 
         return VideoGridTile(video)
     end if
 end function
