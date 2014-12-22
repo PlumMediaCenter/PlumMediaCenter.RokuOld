@@ -3,24 +3,25 @@ Function Main()
     'set the main theme of the application
     SetTheme()
     m.searchResults = []
-
+    
     'add a default facade screen to the app so that the app will only close once this screen has been closed 
     screenFacade = CreateObject("roGridScreen")
     screenFacade.show()
     
     'make sure we have a url to the server
      CheckConfiguration()
-         
+     skipVersionComparison = false
     'make sure that the server specified in the configuration actually exists
     print "Verifying that the server exists."
-    messageScreen = GetNewMessageScreen("", "Verifying that the server exists at the provided url...")
+    messageScreen = GetNewMessageScreen("", "Connecting to server...")
     serverExists = API_ServerExists() 
     If serverExists = False Then 
-        confirmResult = Confirm("Unable to find PlumVideoPlayer server at the following url. Would you like to update the url? '" + BaseUrl() + "'", "Yes", "No")
+        confirmResult = Confirm("Unable to find PlumMediaCenter Server at the following url. Would you like to update the url? '" + BaseUrl() + "'", "Yes", "No")
         If ConfirmResult = True Then
             print "The user DOES want to fix the broken url. Prompting for that now.";
-            GetBaseUrlFromUser()
+            ServerUrlUpdateScreen()
         Else
+            skipVersionComparison = true
             print "The user does NOT want to fix the broken url. Continue as if the server was working"
         End If
     End If
@@ -30,25 +31,24 @@ Function Main()
     messageScreen = GetNewMessageScreen("", "Verifying that the app is compatible with the current version of the server")
    
     messageScreen.close()
-    if compareVersionWithServer() = false
-        messageScreen.close()
-        screenFacade.close()
-        sleep(25)
-        return true
+    'if we already know that we have had issues contacting the server, don't bother comparing version numbers....
+    if skipVersionComparison = false
+        if compareVersionWithServer() = false
+            messageScreen.close()
+            screenFacade.close()
+            sleep(25)
+            return true
+        end if
     end if
     messageScreen.close()
 
     
     
     'Show the video grid
-    ShowVideoGrid()
+    MainGrid()
     'exit the app gently so that the screen doesn't flash to black
     screenFacade.Close()
     sleep(25)
-End Function
-
-Function ShowVideoGrid()
-   MainGrid()
 End Function
 
 '''
@@ -74,14 +74,25 @@ function compareVersionWithServer()
     if appMajor < serverMajor or appMinor < serverMinor
         print "app is behind server"
         'app is behind the server
-        result = Confirm("The server has a higher version than this app can handle. Please go to Settings > System Update to get the latest version of this app","Continue at my own risk","Exit")
-        exitValue = result
+        choice = b_choose("The server has a higher version than this app can handle. Please go to Settings > System Update from the main roku menu to get the latest version of this app","Continue at my own risk","Change server url", "Exit")
+        if choice = 0
+            return true
+        else if choice = 1
+            success = ServerUrlUpdateScreen()
+            'try checking the version on the server again now that we have updated the url
+            return compareVersionWithServer()
+        else
+            return false
+        end if
     'if the server is behind the app
     else if serverMajor < appMajor or serverMinor <appMinor
         print "server is behind app"
         'server is behind the app
-        result = ConfirmWithCancel("The server has a lower version than this app can handle. Would you like to have the server check for updates now (this may take several minutes)?","Yes, update the server now","Don't update the server but launch the app", "Don't update the server and exit the app")
-        if result = 1
+        choice = b_choose(b_concat("The server has a lower version than this app can handle. Server: ", serverVersion, "  Roku App: ", appVersion),"Ignore (Don't update the server)", "Update the server now", "Change the server url", "Exit this app and don't update")
+    
+        if choice = 0
+            exitValue = true
+        else if  choice = 1
             updatingScreen = GetNewMessageScreen("", "Updating server")
             'get the current server version
             updateSuccess = API_UpdateServer()
@@ -102,9 +113,11 @@ function compareVersionWithServer()
                     exitValue = true
                end if
             end if
-        else if result = 0
-            exitValue = true
-        else if result = -1
+        else if choice = 2
+            success = ServerUrlUpdateScreen()
+            'try checking the version on the server again now that we have updated the url
+            return compareVersionWithServer()
+        else 
            exitValue = false
         end if
     'the app and the server are within the same major/minor versions of each other. everything is ok
@@ -122,7 +135,7 @@ Sub CheckConfiguration()
     print "Checking configuration settings"
     bUrl = BaseUrl()
     If bUrl = invalid Then
-        print "PlumVideoPlayer api url is not set. Prompting user to enter url."
+        print "PlumMediaCenter api url is not set. Prompting user to enter url."
         ShowMessage("Setup", "This app must be configured before it can be used. Please follow the instructions")
         print "User clicked ok on the initial setup screen"
         GetBaseUrlFromUser()
@@ -180,10 +193,10 @@ Sub PlayVideo(pVideo as Object)
         'for debugging purposes, skip the confirm window for now
         result = ConfirmWithCancel("Resume where you left off?(" + hmsString + ")", "Resume", "Restart")
         print "Confirm Result: ";result
-        If result = 2 Then
+        If result = 1 Then
             print "PlayVideo: resuming playback at ";startSeconds;" seconds"
             resume = true
-        Else If result = 1 Then
+        Else If result = 0 Then
             print "PlayVideo: restarting video from beginning"
             resume = false
         Else

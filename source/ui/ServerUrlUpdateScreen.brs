@@ -1,25 +1,9 @@
-Function ShowSettings(n)
-    If (n = 0) Then
-        success = GetBaseUrlFromUser()
-            If success <> invalid Then
-            'refresh the video grid
-            print "reload the video grid now that the user has redefined the server url."
-            ShowVideoGrid()
-            return True
-        End if
-    Else If (n = 1) Then
-        print "Refresh media list"
-        ShowVideoGrid()
-        Return True
-    End If
-End Function
-
-Function GetBaseUrlFromUser() as Dynamic
+Function ServerUrlUpdateScreen() as Dynamic
     print "Setting up Base URL Promt Screen"
     screen = CreateObject("roKeyboardScreen")
     'get the serverUrl from the registry
     serverUrl = BaseUrl()
-    'if the server url is not set in the registry, use a default value
+
     If serverUrl = invalid Then
         serverUrl = "http://192.168.1.10:8080/PlumMediaCenter/"
     End If
@@ -27,7 +11,7 @@ Function GetBaseUrlFromUser() as Dynamic
     screen.SetText(serverUrl)
     port = CreateObject("roMessagePort") 
     screen.SetMessagePort(port)
-    screen.SetTitle("PlumVideoPlayer Web URL")
+    screen.SetTitle("PlumMediaCenter Server URL")
     screen.SetDisplayText("Enter the url for the server running PlumMediaCenter.")
     screen.SetMaxLength(800)
     screen.AddButton(1, "Ok")
@@ -51,29 +35,29 @@ Function GetBaseUrlFromUser() as Dynamic
                     end if
                     'save the base url to the registry
                     SetBaseUrl(sBaseUrl)
-                    print "User said that the PlumVideoPlayer url was ";sBaseUrl
-                    messageScreen = GetNewMessageScreen("", "Verifying that the server exists at the provided url...")
+                    print "User said that the server url was ";sBaseUrl
+                    messageScreen = GetNewMessageScreen("", "Connecting to server")
                     'see if the server exists at the url the user specified
                     serverExists = API_ServerExists()
                     messageScreen.close()
                     'if the server exists, use this url
                     If serverExists = true Then
-                        print "Server exists. Setting the PlumVideoPlayer url to=";sBaseUrl
+                        print "Server exists. Setting the PlumMediaCenter Server url to=";sBaseUrl
                         SetBaseUrl(sBaseUrl)
-                        ShowMessage("Success", "Successfully connected to the PlumVideoPlayer server at the specified url.")
+                        ShowMessage("Success", "Successfully connected to the PlumMediaCenter Server at the specified url.")
                         Return true
                     Else
-                        stillSave = Confirm("PlumVideoPlayer Server does not exist at the provided url. Do you still want to use this url?","Yes","No")
+                        stillSave = Confirm("PlumMediaCenter Server does not exist at the provided url. Do you still want to use this url?","Yes","No")
                         If stillSave = true Then
-                            print "PlumVideoPlayer Server does not exist at the provided url. Setting url anyway. url=";sBaseUrl
+                            print "PlumMediaCenter Server does not exist at the provided url. Setting url anyway. url=";sBaseUrl
                             SetBaseUrl(sBaseUrl)
                             Return true
                         Else
-                            return GetBaseUrlFromUser()
+                            return ServerUrlUpdateScreen()
                         End If
                     End If
                 Else
-                    print "User cancled entering the PlumVideoPlayer url"
+                    print "User cancled entering the PlumMediaCenter Server url"
                     Return false 
                  End If
              End If
@@ -81,4 +65,3 @@ Function GetBaseUrlFromUser() as Dynamic
      End While 
      Return invalid
 End Function
-

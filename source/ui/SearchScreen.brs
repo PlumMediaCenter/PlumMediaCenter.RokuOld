@@ -48,7 +48,7 @@ function loadSearchResults(searchTerm) as object
     m.searchTerm = searchTerm
     numberOfResults =  b_size(results)
     print concat("Search results for '",searchTerm,"': count: ",numberOfResults)
-    ShowVideoGrid()
+    MainGrid()
     messageScreen.hide()
 end function
 

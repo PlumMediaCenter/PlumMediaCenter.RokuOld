@@ -24,7 +24,7 @@ Function EpisodeGridScreen(tvShowVideoId as Integer)
         End If
        runtime = invalid
        If episode.runtime > 0 Then
-            episodeRuntimeMinutes = episode.runtime / 60
+            episodeRuntimeMinutes = b_ceil(episode.runtime / 60)
             if episodeRuntimeMinutes <= 1
                 runtime = "Less than 1 minute"
             else
@@ -35,6 +35,7 @@ Function EpisodeGridScreen(tvShowVideoId as Integer)
         
         o.ContentType = "movie"
         o.Title = cstr(episode.episodeNumber) + ". " + cstr(episode.title)
+        print episode.sdPosterUrl
         o.SDPosterUrl = episode.sdPosterUrl
         o.HDPosterUrl = episode.hdPosterUrl
         o.ShortDescriptionLine1 = concat("S", episode.seasonNumber,":E", cstr(episode.episodeNumber).trim()," - ", episode.title)
@@ -88,7 +89,7 @@ Function EpisodeGridScreen(tvShowVideoId as Integer)
             episode = episodeList[episodeIndex]
             PlayVideo(episode)
             'whenever the video has finished playing, reload this grid
-            Return ShowTvEpisodesGrid(tvShowVideoId) 
+            Return EpisodeGridScreen(tvShowVideoId) 
         End If
     End While
 End Function

@@ -1,3 +1,51 @@
+function b_ceil(val as integer)
+    ceiling = val
+    if Int(val) = val 
+        ceiling = val
+    else 
+        ceiling = Int(val) + 1
+    end if
+    return ceiling
+end function
+
+
+'
+' Prompts the user for a yes/no answer, returns the result
+' @return boolean - true if user selects yes, false if user selects no.
+Function b_choose(message,a=invalid,b=invalid,c=invalid,d=invalid,e=invalid,f=invalid,g=invalid,h=invalid) as integer
+    print b_concat("Making user choose: '", message)
+    port = CreateObject("roMessagePort")
+    dialog = CreateObject("roMessageDialog")
+    dialog.SetMessagePort(port) 
+    'dialog.SetTitle(messageTitle)
+    dialog.SetText(message)
+    options = [a,b,c,d,e,f,g,h]
+    i = 0
+    for each option in options
+        if option = invalid
+            exit for
+        end if
+        dialog.AddButton(i, option)
+        i = i + 1
+    end for
+   
+    dialog.Show()
+    While True
+        dlgMsg = wait(0, dialog.GetMessagePort())
+        If type(dlgMsg) = "roMessageDialogEvent"
+            if dlgMsg.isButtonPressed()
+                selectedIndex = dlgMsg.GetIndex()
+                return selectedIndex
+            Else If dlgMsg.isScreenClosed()
+                exit while
+            End If
+        End If
+    End While
+    'default to return false
+    print "User chose cancel or back" 
+    Return -1 
+End Function
+
 '''
 ' count the number of items in an array or associative array
 '''
@@ -177,3 +225,5 @@ Function b_concat(a=invalid,b=invalid,c=invalid,d=invalid,e=invalid,f=invalid,g=
     end if
     return result
 End function
+
+    

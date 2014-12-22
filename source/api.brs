@@ -143,6 +143,7 @@ Function API_GetServerVersionNumber() as String
     
     url = mBaseUrl + "api/GetServerVersionNumber.php"
     result = GetJSON(url)
+    print b_concat("server says that version is", result)
     if result = invalid then
         print "result is invalid"
         result = "0.1.0"

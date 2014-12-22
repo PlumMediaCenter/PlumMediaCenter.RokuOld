@@ -28,7 +28,7 @@ function MainGrid()
         SDPosterUrl: "pkg:/images/search.sd.png"
         HDPosterUrl: "pkg:/images/search.hd.png"
     }))
-       'load any search results into the list as well
+   'load any search results into the list as well
     if b_size(m.searchResults) > 0 
         for each video in m.searchResults
             searchList.Push(GetMediaTypeVideoGridTile(video))
@@ -65,7 +65,13 @@ function MainGrid()
         SDPosterUrl: "pkg:/images/settings.sd.png",
         HDPosterUrl: "pkg:/images/settings.hd.png",
         onSelect: function()
-            showSettings(0)
+            success = ServerUrlUpdateScreen()
+            If success <> invalid Then
+            'refresh the video grid
+            print "reload the video grid now that the user has redefined the server url."
+            MainGrid()
+            return True
+        End if
         end function
     }))
     settingsList.push(GridTile({
@@ -74,14 +80,26 @@ function MainGrid()
         SDPosterUrl: "pkg:/images/refresh.sd.png",
         HDPosterUrl: "pkg:/images/refresh.hd.png",
         onSelect: function()
-            showSettings(1)
+            MainGrid()
         end function
     }))
     settingsList.push(GridTile({
-        Title: "Version Number",
+        Title: "Check for server updates",
         Description:concat("App Version: ", APP_VERSION_NUMBER(), chr(10),"Server Version: ", API_GetServerVersionNumber()),
         SDPosterUrl: "pkg:/images/info.sd.png",
-        HDPosterUrl: "pkg:/images/info.hd.png"
+        HDPosterUrl: "pkg:/images/info.hd.png",
+        onSelect: function()
+            waitMessage = GetNewMessageScreen("Updating", "Checking for updates...")            
+            'try to update the server
+            success = API_UpdateServer()
+            waitMessage.close()
+            if success = true
+                ShowMessage("", "Server was successfully updated")
+            else
+                ShowMessage("", "There was an issue while updating the server")
+            end if
+            MainGrid()
+        end function
     }))
 
     grid.addRow("Settings", settingsList)
