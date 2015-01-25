@@ -157,7 +157,7 @@ Function API_GetServerVersionNumber() as String
 End Function
 
 function API_GetSearchSuggestions(searchString) as Object
-    url = concat(BaseUrl(), "api/GetSearchSuggestions.php?title=",searchString)
+    url = concat(BaseUrl(), "api/GetSearchSuggestions.php?q=",searchString)
     result = GetJSON(url)
     if result = invalid 
         result = []
@@ -167,7 +167,7 @@ function API_GetSearchSuggestions(searchString) as Object
 end function
 
 function API_GetSearchResults(searchString) as Object
-    url = concat(BaseUrl(), "api/GetSearchResults.php?title=", b_escapeUrl(searchString))
+    url = concat(BaseUrl(), "api/GetSearchResults.php?q=", b_escapeUrl(searchString))
     print concat("API-GetSearchResults: url: ", url)
     searchResults = GetJSON(url)
     print concat("API-GetSearchResults: number of results found: ", b_size(searchResults))
