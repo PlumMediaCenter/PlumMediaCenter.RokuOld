@@ -138,7 +138,7 @@ Sub CheckConfiguration()
         print "PlumMediaCenter api url is not set. Prompting user to enter url."
         ShowMessage("Setup", "This app must be configured before it can be used. Please follow the instructions")
         print "User clicked ok on the initial setup screen"
-        GetBaseUrlFromUser()
+        ServerUrlUpdateScreen()
     Else 
         print "Base URL is set.";bUrl
     End If
