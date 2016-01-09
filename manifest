@@ -1,8 +1,8 @@
-title=Plum Video Player
-subtitle=Plum Video Player
+title=PlumMediaCenter
+subtitle=PlumMediaCenter
 major_version=1
-minor_version=0
-build_version=20131210171678
+minor_version=1
+build_version=20131210171774
 mm_icon_focus_hd=pkg:/images/focus_hd.png
 mm_icon_side_hd=pkg:/images/side_hd.png
 mm_icon_focus_sd=pkg:/images/focus_sd.png

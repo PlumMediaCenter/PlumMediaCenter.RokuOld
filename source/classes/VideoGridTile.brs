@@ -17,8 +17,8 @@ function VideoGridTile(video)
     })
     
     'if the video has no poster, then the poster url is pointing to a relative path to the server.
-    o.SDPosterUrl = b_iff(video.posterModifiedDate = invalid, b_concat(BaseUrl(), video.sdPosterUrl), video.sdPosterUrl)
-    o.HDPosterUrl = b_iff(video.posterModifiedDate = invalid, b_concat(BaseUrl(), video.hdPosterUrl), video.hdPosterUrl)
+    o.SDPosterUrl = b_iff(video.posterModifiedDate = invalid, b_concat(g_baseUrl(), video.sdPosterUrl), video.sdPosterUrl)
+    o.HDPosterUrl = b_iff(video.posterModifiedDate = invalid, b_concat(g_baseUrl(), video.hdPosterUrl), video.hdPosterUrl)
     o.video = video
     o.videoId = video.videoId
     return o

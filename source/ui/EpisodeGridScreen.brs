@@ -34,11 +34,11 @@ Function EpisodeGridScreen(tvShowVideoId as Integer)
         o = CreateObject("roAssociativeArray")
         
         o.ContentType = "movie"
-        o.Title = cstr(episode.episodeNumber) + ". " + cstr(episode.title)
+        o.Title = b_toString(episode.episodeNumber) + ". " + b_toString(episode.title)
         print episode.sdPosterUrl
         o.SDPosterUrl = episode.sdPosterUrl
         o.HDPosterUrl = episode.hdPosterUrl
-        o.ShortDescriptionLine1 = concat("S", episode.seasonNumber,":E", cstr(episode.episodeNumber).trim()," - ", episode.title)
+        o.ShortDescriptionLine1 = concat("S", episode.seasonNumber,":E", b_toString(episode.episodeNumber).trim()," - ", episode.title)
         
         o.Description = episode.plot
         o.Rating = episode.mpaa
@@ -87,6 +87,10 @@ Function EpisodeGridScreen(tvShowVideoId as Integer)
             print "Selected Episode Index: ";msg.GetIndex()
             episodeIndex = msg.GetIndex()
             episode = episodeList[episodeIndex]
+            PlayVideo(episode)
+            'whenever the video has finished playing, reload this grid
+            Return EpisodeGridScreen(tvShowVideoId) 
+        else if msg.isRemoteKeyPressed() and msg.GetIndex() = C_BUTTON_PLAY() then
             PlayVideo(episode)
             'whenever the video has finished playing, reload this grid
             Return EpisodeGridScreen(tvShowVideoId) 

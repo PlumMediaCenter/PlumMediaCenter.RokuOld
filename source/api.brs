@@ -4,7 +4,7 @@
 ' @return Object  - the library object if successful, an empty library object if unsuccessful 
 '
 Function API_GetLibrary() as Object
-    libraryUrl = BaseUrl() + "api/GetLibrary.php"
+    libraryUrl = g_baseUrl() + "api/GetLibrary.php"
     'perform a blocking request to retrieve the library object
 
 
@@ -25,7 +25,7 @@ End Function
 ' Gets the next episode videoId for the specified tv show
 '
 Function API_GetNextEpisode(tvShowVideoId as integer) as Object
-    url = BaseUrl() + "api/GetNextEpisode.php?videoId=" + tvShowVideoId.ToStr()
+    url = g_baseUrl() + "api/GetNextEpisode.php?videoId=" + tvShowVideoId.ToStr()
     print "API-GetNextEpisode: ";url
     result = GetJson(url)
     If result = invalid Then
@@ -55,7 +55,7 @@ End Function
 ' Returns an object containing the tv show with the videoId requested, as well as all of the episodes in that show
 '
 Function API_GetTvShow(tvShowVideoId as Integer) as Object
-    url = BaseUrl() + "api/GetTvShow.php?videoId=" + tvShowVideoId.ToStr()
+    url = g_baseUrl() + "api/GetTvShow.php?videoId=" + tvShowVideoId.ToStr()
     print "API-GetTvShow: ";url
     result = GetJson(url)
     If result <> invalid Then
@@ -70,7 +70,7 @@ End Function
 ' Returns an object containing the tv show with the videoId requested, as well as all of the episodes in that show
 '
 Function API_GetTvEpisodes(tvShowVideoId as Integer) as Object
-    url = b_concat(BaseUrl(), "api/GetTvEpisodes.php?videoId=", tvShowVideoId)
+    url = b_concat(g_baseUrl(), "api/GetTvEpisodes.php?videoId=", tvShowVideoId)
     print "API-GetTvEpisodes: ";url
     result = GetJson(url)
     If result <> invalid Then
@@ -86,7 +86,7 @@ End Function
 'Get the current second number to start a video at 
 '
 Function API_GetVideoProgress(videoId as Integer) as Integer
-    url = BaseUrl() + "api/GetVideoProgress.php?videoId=" + videoId.ToStr()
+    url = g_baseUrl() + "api/GetVideoProgress.php?videoId=" + videoId.ToStr()
     print "API-GetVideoProgress: ";url
     progress = GetJSON(url)
     startSeconds = progress.startSeconds
@@ -101,7 +101,7 @@ End Function
 Sub API_SetVideoProgress(videoId as Integer, seconds as Integer)
     strSeconds = seconds.ToStr()
     strVideoId = videoId.ToStr()
-    url = BaseUrl() + "api/SetVideoProgress.php?videoId=" + strVideoId + "&seconds=" + strSeconds
+    url = g_baseUrl() + "api/SetVideoProgress.php?videoId=" + strVideoId + "&seconds=" + strSeconds
     result = GetJSON(url)
     success = result.success
     print "API-SetVideoProgress: videoId=";strVideoId;", seconds=";strSeconds;", success=";success
@@ -112,7 +112,7 @@ End Sub
 '
 Sub API_SetVideoCompleted(videoId as Integer)
     strVideoId = videoId.ToStr()
-    url = BaseUrl() + "api/SetVideoProgress.php?videoId=" + strVideoId + "&finished=true"
+    url = g_baseUrl() + "api/SetVideoProgress.php?videoId=" + strVideoId + "&finished=true"
     result = GetJSON(url)
     success = result.success
     print "API-SetVideoProgress completed: videoId=";strVideoId;", success=";success
@@ -122,7 +122,7 @@ End Sub
 ' Determines if the server is currently visible or not. 
 '
 Function API_ServerExists() as Boolean
-    mBaseUrl = BaseUrl()
+    mBaseUrl = g_baseUrl()
     If mBaseUrl = invalid Then
         Return false
     End If
@@ -135,7 +135,7 @@ Function API_ServerExists() as Boolean
 End Function
 
 Function API_GetServerVersionNumber() as String
-    mBaseUrl = BaseUrl()
+    mBaseUrl = g_baseUrl()
     If mBaseUrl = invalid Then
         print "base url is invalid"
         Return "0.1.0"
@@ -157,7 +157,7 @@ Function API_GetServerVersionNumber() as String
 End Function
 
 function API_GetSearchSuggestions(searchString) as Object
-    url = concat(BaseUrl(), "api/GetSearchSuggestions.php?q=",searchString)
+    url = concat(g_baseUrl(), "api/GetSearchSuggestions.php?q=",searchString)
     result = GetJSON(url)
     if result = invalid 
         result = []
@@ -167,7 +167,7 @@ function API_GetSearchSuggestions(searchString) as Object
 end function
 
 function API_GetSearchResults(searchString) as Object
-    url = concat(BaseUrl(), "api/GetSearchResults.php?q=", b_escapeUrl(searchString))
+    url = concat(g_baseUrl(), "api/GetSearchResults.php?q=", b_escapeUrl(searchString))
     print concat("API-GetSearchResults: url: ", url)
     searchResults = GetJSON(url)
     print concat("API-GetSearchResults: number of results found: ", b_size(searchResults))
@@ -175,7 +175,7 @@ function API_GetSearchResults(searchString) as Object
 end function
 
 function API_UpdateServer() as Boolean
-    url = concat(BaseUrl(), "api/Update.php")
+    url = concat(g_baseUrl(), "api/Update.php")
     print concat("API-UpdateServer: url: ", url)
     result = GetJSON(url)
     print result

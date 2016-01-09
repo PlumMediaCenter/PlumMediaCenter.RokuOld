@@ -16,7 +16,7 @@ Function Main()
     messageScreen = GetNewMessageScreen("", "Connecting to server...")
     serverExists = API_ServerExists() 
     If serverExists = False Then 
-        confirmResult = Confirm("Unable to find PlumMediaCenter Server at the following url. Would you like to update the url? '" + BaseUrl() + "'", "Yes", "No")
+        confirmResult = Confirm("Unable to find PlumMediaCenter Server at the following url. Would you like to update the url? '" + g_baseUrl() + "'", "Yes", "No")
         If ConfirmResult = True Then
             print "The user DOES want to fix the broken url. Prompting for that now.";
             ServerUrlUpdateScreen()
@@ -74,7 +74,7 @@ function compareVersionWithServer()
     if appMajor < serverMajor or appMinor < serverMinor
         print "app is behind server"
         'app is behind the server
-        choice = b_choose("The server has a higher version than this app can handle. Please go to Settings > System Update from the main roku menu to get the latest version of this app","Continue at my own risk","Change server url", "Exit")
+        choice = b_choose("The server has a higher version than this app can handle. Please go to Settings > System Update from the main roku menu to get the latest version of this app", 0, "Continue at my own risk","Change server url", "Exit")
         if choice = 0
             return true
         else if choice = 1
@@ -88,7 +88,7 @@ function compareVersionWithServer()
     else if serverMajor < appMajor or serverMinor <appMinor
         print "server is behind app"
         'server is behind the app
-        choice = b_choose(b_concat("The server has a lower version than this app can handle. Server: ", serverVersion, "  Roku App: ", appVersion),"Ignore (Don't update the server)", "Update the server now", "Change the server url", "Exit this app and don't update")
+        choice = b_choose(b_concat("The server has a lower version than this app can handle. Server: ", serverVersion, "  Roku App: ", appVersion), 0, "Ignore (Don't update the server)", "Update the server now", "Change the server url", "Exit this app and don't update")
     
         if choice = 0
             exitValue = true
@@ -133,7 +133,7 @@ end function
 '
 Sub CheckConfiguration()
     print "Checking configuration settings"
-    bUrl = BaseUrl()
+    bUrl = g_baseUrl()
     If bUrl = invalid Then
         print "PlumMediaCenter api url is not set. Prompting user to enter url."
         ShowMessage("Setup", "This app must be configured before it can be used. Please follow the instructions")
@@ -270,6 +270,7 @@ Sub PlayVideo(pVideo as Object)
             Else If msg.isFullResult()
                   print "playback completed"
                   API_SetVideoCompleted(pVideo.videoId)
+                  completeVideo(pVideo)
                   exit while
             Else If msg.isPartialResult()
                   print "playback interrupted"
@@ -282,3 +283,33 @@ Sub PlayVideo(pVideo as Object)
        End If
     End While 
 End Sub
+
+function completeVideo(video)
+    if g_autoplayIsEnabled() = true then
+        print "video media type: ";video.mediaType
+        print "auto-play is enabled"
+        if video.mediaType = "TvShow" or video.mediaType = "TvEpisode" then
+            print "video is show or episode"
+            messageScreen = GetNewMessageScreen("", "Loading next episode to watch...")
+            episode = API_GetNextEpisode(video.videoId)
+            
+            'if we have just played the last episode, don't repeat it...
+            if episode.videoId = video.videoId then
+                '
+                'show = API_GetTvShow(Int(episode.tvShowVideoId))
+                b_alert("Congratulations. You have just finished the last episode of the show")
+                return invalid
+            end if
+            result = UpcomingVideoScreen(episode)
+            if result = true then
+                PlayVideo(episode)
+            else
+                'do nothing, the video will just end and we will fall back to the previous screen
+            end if
+        else
+            print "video is not show or episode"
+        end if
+    else
+        print "auto-play is disabled"
+    end if
+end function

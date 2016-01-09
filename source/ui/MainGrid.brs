@@ -60,18 +60,12 @@ function MainGrid()
     '
     settingsList = []
     settingsList.push(GridTile({
-        Title: "Set PlumMediaCenter server url",
-        Description:"Set the url for the PlumMediaCenter server that this app will interact with",
+        Title: "Settings",
+        Description:"Change settings",
         SDPosterUrl: "pkg:/images/settings.sd.png",
         HDPosterUrl: "pkg:/images/settings.hd.png",
         onSelect: function()
-            success = ServerUrlUpdateScreen()
-            If success <> invalid Then
-            'refresh the video grid
-            print "reload the video grid now that the user has redefined the server url."
-            MainGrid()
-            return True
-        End if
+            SettingsScreen()
         end function
     }))
     settingsList.push(GridTile({

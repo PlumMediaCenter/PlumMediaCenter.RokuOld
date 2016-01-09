@@ -1,40 +1,4 @@
-'
-' Retrieves the registry value in the provided section and at the specified key
-' The registry technically lets you organize your registry values by category and name.
-' Most of the time it doesn't seem that many registry items are needed, so this function
-' just saves everyting in the 'Settings' category. 
-'
-Function GetRegVal(name as String) As Dynamic
-    section = "Settings"
-    sec = CreateObject("roRegistrySection", section)
-     if sec.Exists(name)  
-         return sec.Read(name)
-     endif
-     return invalid
-End Function
 
-'
-' Saves a value to the registry in the 'Settings category
-' @param string name - the name of the variable to be saved in the registry
-' @param string value - the value to save into the registry
-'
-Function SetRegVal(name as String, value as String) As Void
-    section = "Settings" 
-    sec = CreateObject("roRegistrySection", section)
-    sec.Write(name, value)
-    sec.Flush()
-End Function
-
-
-'
-' Deletes a registry setting from the registry
-'
-Function DeleteRegVal(name as String) as Void
-    section = "Settings" 
-    sec = CreateObject("roRegistrySection", section)
-    sec.Delete(name)
-    sec.Flush()
-End Function
 
 function Get(sUrl as string) as object
     searchRequest = CreateObject("roUrlTransfer") 
@@ -69,14 +33,6 @@ Function GetJSONBoolean(sUrl as String) as Boolean
     Else
         return false
     End If
-End Function
-
-'
-' Takes an object and converts it to string. 
-'
-'
-Function CStr(item) as String
-    return b_CStr(item)
 End Function
 
 function iff(condition, trueValue, falseValue)
