@@ -1,4 +1,48 @@
 '
+' Retrieves the list of category names that will be displayed in the grid
+'
+Function API_GetCategoryNames() as Object
+    url = g_baseUrl() + "api/GetCategoryNames.php"
+    'perform a blocking request to retrieve the library object
+
+
+    names = GetJSON(url)
+    
+    'if the library was not able to be retrieved, make an empty library object
+    If (names = invalid) Then
+        print "Failed to successfully fetch category names from the server"
+        names = []
+    Else
+        print "Retrieved library from server. "
+    End if
+    
+    return names
+End Function
+
+'
+' Retrieves the list of categories
+'
+Function API_GetCategories(categoryNames) as Object
+    querystring = b_join(categoryNames, ",")
+    url = g_baseUrl() + "api/GetCategories.php?names=" + b_urlEncode(querystring)
+    b_print("Retrieving categories")
+    categories = GetJSON(url)
+    categoryLookup = {}
+    If (categories = invalid) Then
+        print "Failed to successfully fetch categories from the server"
+        categories = []
+        'put the categories into an associative array
+    Else
+        for each category in categories
+            categoryLookup[category.name] = category
+        end for
+        print "Retrieved categories from server."
+    End if
+    
+    return categoryLookup
+End Function
+
+'
 ' Retrieves the library json file from the server. If that was unsuccessful, 
 ' this function returns an empty library object
 ' @return Object  - the library object if successful, an empty library object if unsuccessful 

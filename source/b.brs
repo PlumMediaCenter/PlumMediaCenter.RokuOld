@@ -220,6 +220,21 @@ function b_isInvalid(value as Dynamic) as Boolean
     Return not b_isValid(value)
 end function
 
+'
+' Join an array of items into a string separated by the separator
+' @return string
+'
+function b_join(arr, separator)
+    result = ""
+    sep = ""
+    for each item in arr
+        result = result +  sep + b_toString(item)
+        sep = separator
+    end for
+    return result
+end function
+
+
 function b_jsonStringify(obj as dynamic)
     return SimpleJSONBuilder(obj)
 end function
@@ -444,8 +459,24 @@ function b_toString(item) as String
         result = "[function]"
     else if itemType = "Interface"
         result = "[interface]"
+    else if itemType = "roArray"
+        result = "["
+        sep = ""
+        for each arrItem in item
+            quot = b_iff(type(arrItem) = "String", "'","")
+            result = result + sep + quot + b_toString(arrItem) + quot
+            sep = ","
+        end for
+        result = result + "]"
     else
         result = Str(item)
     end if
     return result
 end function
+
+function b_urlEncode(str)
+    o = CreateObject("roUrlTransfer")
+    return o.Escape(str)
+end function
+
+

@@ -55,6 +55,16 @@ Sub FireNonBlockingRequest(sUrl as String)
     searchRequest.AsyncGetToString() 
 End Sub
 
+function GetMediaTypeVideoGridTiles(videos)
+    tiles = []
+    'break the videos out into movies or tv shows
+    for each video in videos
+        tile = GetMediaTypeVideoGridTile(video)
+        tiles.Push(tile)
+    end for
+    return tiles
+end function
+
 Function GetNewMessageScreen(messageTitle = "", message = "") as Object
     dialog = CreateObject("roMessageDialog")
     dialog.SetTitle(messageTitle)

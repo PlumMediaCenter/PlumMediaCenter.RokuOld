@@ -10,12 +10,24 @@ function MainGrid()
     
     'show a loading message while we set up the page
     messageScreen = GetNewMessageScreen("", "Loading videos...")
+    
+    categoryNames = API_GetCategoryNames()
+    b_printc("Server said it has these categories: ", categoryNames)
+    categories = API_GetCategories(categoryNames)
 
     'load the library from the server. This will replace the global library object with a new one from the server
-    LoadLibrary()
+    'LoadLibrary()
     
     'get a new grid manager to keep track of all of the tiles
     grid = GridManager()
+    
+    
+    'assume that the first item in the list is the 'recently watched' category
+    recentlyWatchedCategory = categories[categoryNames[0]]
+    print recentlyWatchedCategory
+    tiles = GetMediaTypeVideoGridTiles(recentlyWatchedCategory.videos)
+    grid.addRow(categoryNames[0], tiles)
+    
     
     '
     ' Add search tile and any search results
@@ -37,24 +49,19 @@ function MainGrid()
     searchTitle = iff(m.searchTerm <> invalid, concat("Search Results for '", m.searchTerm, "'"), "Search")
     grid.addRow(searchTitle, searchList)
     
-    tvShowList = []
-    movieList = []
- 
-    'break the videos out into movies or tv shows
-    for each video in m.lib
-        tile = GetMediaTypeVideoGridTile(video)
-        if video.mediaType = "TvShow"
-           tvShowList.push(tile)
+    'loop through every other category and add a row for each
+    
+    isFirstCategory = true
+    for each categoryName in categoryNames  
+        category = categories[categoryName]
+        'skip the first one since it is the 'recently watched' category
+        if isFirstCategory then
+            isFirstcategory = false
         else
-            movieList.push(tile)
+            grid.addRow(categoryName, GetMediaTypeVideoGridTiles(category.videos))
         end if
     end for
- 
-    'add the tv shows to the grid
-    grid.addRow("TV Shows", tvShowList)
-    'add the movies to the grid
-    grid.addRow("Movies", movieList)
-    
+   
     '
     ' Add settings
     '
