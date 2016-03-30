@@ -1,5 +1,13 @@
+function beforeEverything()
+    'VideoInfoScreen(4688)
+'    g_baseUrl("http://192.168.1.26:8080/PlumMediaCenter/")
+'    video = API_GetVideo(4712)
+'    completeVideo(video)
+'    return -1
+end function
 
 Function Main()
+   
     'set the main theme of the application
     SetTheme()
     m.searchResults = []
@@ -8,12 +16,19 @@ Function Main()
     screenFacade = CreateObject("roGridScreen")
     screenFacade.show()
     
+    'collect the message screens so we can close them all in one sweep, because it gets a bit jumpy otherwise
+    messageScreens = []
+    
+    beforeEverything()
+    
     'make sure we have a url to the server
      CheckConfiguration()
      skipVersionComparison = false
     'make sure that the server specified in the configuration actually exists
     print "Verifying that the server exists."
     messageScreen = GetNewMessageScreen("", "Connecting to server...")
+    messageScreens.push(messageScreen)
+    
     serverExists = API_ServerExists() 
     If serverExists = False Then 
         confirmResult = Confirm("Unable to find PlumMediaCenter Server at the following url. Would you like to update the url? '" + g_baseUrl() + "'", "Yes", "No")
@@ -25,12 +40,11 @@ Function Main()
             print "The user does NOT want to fix the broken url. Continue as if the server was working"
         End If
     End If
-    messageScreen.close()
     
     'we know that the server exists....but now make sure that our version and the server's version are compatible
     messageScreen = GetNewMessageScreen("", "Verifying that the app is compatible with the current version of the server")
    
-    messageScreen.close()
+   messageScreens.Push(messageScreen)
     'if we already know that we have had issues contacting the server, don't bother comparing version numbers....
     if skipVersionComparison = false
         if compareVersionWithServer() = false
@@ -40,9 +54,11 @@ Function Main()
             return true
         end if
     end if
-    messageScreen.close()
 
-    
+    'close all of the message screens. 
+    for each messageScreen in messageScreens
+        messageScreen.close()
+    end for
     
     'Show the video grid
     MainGrid()
@@ -184,9 +200,8 @@ Sub PlayVideo(pVideo as Object)
     
     messageScreen = GetNewMessageScreen("", "Preparing video for playback...")
     
-    print pVideo
     startSeconds = API_GetVideoProgress(pVideo.videoId)
-    print "Start Seconds";startSeconds
+    print "Start Seconds: ";startSeconds
     resume = true
     If startSeconds > 0 Then
         hmsString = GetHourMinuteSecondString(startSeconds)
@@ -224,7 +239,7 @@ Sub PlayVideo(pVideo as Object)
 
     ' Note: The preferred way to specify stream info in v2.6 is to use
     ' the Stream roAssociativeArray content meta data parameter. 
-    print "Play Video...Url:";pVideo.url
+    print "Play Video...Url: ";pVideo.url
     video.Stream = { 
         url: pVideo.url
         bitrate:0
@@ -286,8 +301,10 @@ End Sub
 
 function completeVideo(video)
     if g_autoplayIsEnabled() = true then
-        print "video media type: ";video.mediaType
         print "auto-play is enabled"
+        'load the video again, because apparently it is losing the mediaType somwewhere in this process
+        video = API_GetVideo(video.videoId)
+        print "video.mediaType is ";video.mediaType
         if video.mediaType = "TvShow" or video.mediaType = "TvEpisode" then
             print "video is show or episode"
             messageScreen = GetNewMessageScreen("", "Loading next episode to watch...")

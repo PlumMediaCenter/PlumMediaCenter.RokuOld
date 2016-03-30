@@ -5,9 +5,7 @@ function VideoGridTile(video)
         Rating: video.mpaa,
         ReleaseDate: video.year,
         onSelect: function()
-                messageScreen = GetNewMessageScreen("Loading", "Playing video")
-                PlayVideo(m.video)
-                messageScreen.close()
+                VideoInfoScreen(m.video.videoId)
             end function,
         onPlay: function()
                 messageScreen = GetNewMessageScreen("Loading", "Playing video")

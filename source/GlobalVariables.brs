@@ -14,13 +14,30 @@ function g_baseUrl(value="__invalid") as dynamic
     return invalid
 end function
 
-function g_autoplayIsEnabled(value="__invalid") as dynamic
-    print "autoplayIsEnabled.";b_iff( b_isInvalid(value), "get()", "set()")
+'
+' Gets or sets the autoplay duration. A duration of 0 is instant, a duration of -1 is disabled
+function g_autoplayDuration(value="__invalid") as dynamic
     if b_toString(value) = "__invalid" then
-        result = b_getRegistryValue("autoplayIsEnabled")
-        return b_iff(result = "false", false, true)
+        print "get autoplayDuration"
+        result = b_getRegistryValue("autoplayDuration")
+        print "autoplayValue=";result
+        return b_iff(b_isInvalid(result), 10000, b_parseInt(result))
     else
-        b_setRegistryValue("autoplayIsEnabled", b_toString(value))
+        duration = b_toString(value)
+        print "set autoplayDuration";duration
+        b_setRegistryValue("autoplayDuration", duration)
     end if
     return invalid
+end function
+
+'
+' Determines if autoplay is enabled
+'
+function g_autoplayIsEnabled() as boolean
+    duration = g_autoplayDuration()
+    if duration > 0 then
+        return true
+    else
+        return false
+    end if
 end function

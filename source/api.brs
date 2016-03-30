@@ -81,6 +81,23 @@ Function API_GetTvEpisodes(tvShowVideoId as Integer) as Object
     return result
 End Function
 
+'
+'Get the current second number to start a video at 
+'
+Function API_GetVideo(videoId as Integer) as object
+    b_print("API_GetVideo", 1)
+    
+    url = b_concat(g_baseUrl(), "api/GetVideo.php?videoId=", videoId)
+    
+    b_printc("url: ", url)
+    
+    video = GetJSON(url)
+    b_printc("Success. videoId: ", b_toString(video.videoId))
+    
+    b_print(invalid, -1)
+    return video 
+End Function
+
 
 '
 'Get the current second number to start a video at 
@@ -143,7 +160,7 @@ Function API_GetServerVersionNumber() as String
     
     url = mBaseUrl + "api/GetServerVersionNumber.php"
     result = GetJSON(url)
-    print b_concat("server says that version is", result)
+    print b_concat("server says that version is: ", result)
     if result = invalid then
         print "result is invalid"
         result = "0.1.0"

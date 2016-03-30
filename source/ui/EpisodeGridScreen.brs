@@ -35,7 +35,6 @@ Function EpisodeGridScreen(tvShowVideoId as Integer)
         
         o.ContentType = "movie"
         o.Title = b_toString(episode.episodeNumber) + ". " + b_toString(episode.title)
-        print episode.sdPosterUrl
         o.SDPosterUrl = episode.sdPosterUrl
         o.HDPosterUrl = episode.hdPosterUrl
         o.ShortDescriptionLine1 = concat("S", episode.seasonNumber,":E", b_toString(episode.episodeNumber).trim()," - ", episode.title)
@@ -74,23 +73,25 @@ Function EpisodeGridScreen(tvShowVideoId as Integer)
     messageScreen.Close()
     print "show episode screen"
     eScreen.Show() 
-    episodeIndex = -1
+    episodeIndex = nextEpisodeIndex
     while true
         msg = wait(0, port)
         If msg.isScreenClosed() then
             m.episodeScreen = invalid
             Return -1
         Else If msg.isListItemFocused()
-            print "Focused msg: ";msg.GetMessage();"row: ";msg.GetIndex();
-            print " col: ";msg.GetData()
+            print "Focused msg: ";msg.GetMessage()
+            print "row: ";msg.GetData();
+            print " col: ";msg.GetIndex()
+            episodeIndex = msg.GetIndex()
          Else If msg.isListItemSelected()
             print "Selected Episode Index: ";msg.GetIndex()
-            episodeIndex = msg.GetIndex()
             episode = episodeList[episodeIndex]
             PlayVideo(episode)
             'whenever the video has finished playing, reload this grid
             Return EpisodeGridScreen(tvShowVideoId) 
         else if msg.isRemoteKeyPressed() and msg.GetIndex() = C_BUTTON_PLAY() then
+            episode = episodeList[episodeIndex]
             PlayVideo(episode)
             'whenever the video has finished playing, reload this grid
             Return EpisodeGridScreen(tvShowVideoId) 

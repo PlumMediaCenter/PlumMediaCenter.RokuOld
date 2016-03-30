@@ -9,7 +9,9 @@ function UpcomingVideoScreen(video)
     port = CreateObject("roMessagePort")
     screen.SetMessagePort(port)
     
-    secondsUntilPlayback = 15
+    autoplayDuration = g_autoplayDuration()
+    secondsUntilPlayback = iff(autoplayDuration > 0, autoplayDuration / 1000, 0)
+    
     baselineText = b_concat("Up next: ", video.title, " Season ", video.seasonNumber, " Episode ", video.episodeNumber, chr(10), "Playing in ")
     screen.UpdateText(b_concat(baselineText, secondsUntilPlayback, " seconds"))
     screen.ShowBusyAnimation()
@@ -39,13 +41,14 @@ function UpcomingVideoScreen(video)
                     end if
             end function, 
         intervalCallback: function(obj)
+                print "autoplay next video in ";obj.secondsUntilPlayback;" seconds" 
                 obj.secondsUntilPlayback = obj.secondsUntilPlayback - 1
                 obj.screen.UpdateText(b_concat(obj.baselineText, obj.secondsUntilPlayback, " seconds"))
             end function
-        secondsUntilPlayback: 15,
+        secondsUntilPlayback: secondsUntilPlayback,
         screen: screen,
         baselineText: baselineText,
-        durationMilliseconds: 15000,
+        durationMilliseconds: autoplayDuration,
         intervalMilliseconds: 1000,
         port: port
     })

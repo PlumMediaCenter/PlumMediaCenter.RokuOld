@@ -26,12 +26,36 @@ function SettingsScreen()
     o.SDPosterUrl =  "pkg:/images/settings.sd.png"
     o.HDPosterUrl = "pkg:/images/settings.hd.png"
     o.action = function()
-        choice = b_choose("Enable Auto-play?", 0, "Yes", "No")
+        selectedIndex = 0
+        
+        duration = g_autoplayDuration()
+        if duration = 15000 then
+            selectedIndex = 1
+        else if duration = 10000 then
+            selectedIndex = 1
+        else if duration = 5000 then
+            selectedIndex = 2
+        else if duration = 0
+            selectedIndex = 3
+        else 
+            selectedIndex = 4
+        end if
+        
+        choice = b_choose("Select the length of time to wait before playing the next media item", selectedIndex, "15 seconds", "10 seconds", "5 seconds", "Instant", "Disable auto-play")
         if choice = 0 then
-            g_autoplayIsEnabled("true")
+            duration = 15000 
+        else if choice = 1 then
+            duration = 10000
+        else if choice = 2 then
+            duration = 5000
+        else if choice = 3 then
+            duration = 0
         else
-            g_autoplayIsEnabled("false")
-        end if        
+            duration = -1
+        end if
+        
+        'set the selected duration
+        g_autoplayDuration(duration)
     end function
     list.Push(o)
     
