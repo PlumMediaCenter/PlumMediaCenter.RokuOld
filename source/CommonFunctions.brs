@@ -59,8 +59,11 @@ function GetMediaTypeVideoGridTiles(videos)
     tiles = []
     'break the videos out into movies or tv shows
     for each video in videos
-        tile = GetMediaTypeVideoGridTile(video)
-        tiles.Push(tile)
+        b_printc("viewing video", video)
+        if b_isAssociativeArray(video) then 
+            tile = GetMediaTypeVideoGridTile(video)
+            tiles.Push(tile)
+        end if
     end for
     return tiles
 end function
