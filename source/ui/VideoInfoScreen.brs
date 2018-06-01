@@ -1,12 +1,13 @@
-Function VideoInfoScreen(videoId as Integer)
+function VideoInfoScreen(videoId as integer)
     b_print("VideoInfoScreen", 1)
     
     b_print(b_concat("videoId: ", videoId))
-
+    
     messageScreen =  GetNewMessageScreen("", "Loading")
-    If m.videoInfoScreen = invalid Then
+    if m.videoInfoScreen = invalid then
         m.videoInfoScreen = CreateObject("roSpringboardScreen")
-    End If     
+        SetAuthHeader(m.videoInfoScreen)
+    end if     
     video = API_GetVideo(videoId)
     
     b_print(video)
@@ -32,25 +33,25 @@ Function VideoInfoScreen(videoId as Integer)
     o.SDPosterUrl = video.sdPosterUrl
     o.HDPosterUrl = video.hdPosterUrl
     o.Rating = video.mpaa
-'    o.StarRating = "75"
+    '    o.StarRating = "75"
     o.ReleaseDate = video.year
     o.Length = video.runtime
-'    o.Categories = CreateObject("roArray", 10, true)
-'    o.Categories.Push("[Category1]")
-'    o.Categories.Push("[Category2]")
-'    o.Categories.Push("[Category3]")
-'    o.Actors = CreateObject("roArray", 10, true)
-'    o.Actors.Push("[Actor1]")
-'    o.Actors.Push("[Actor2]")
-'    o.Actors.Push("[Actor3]")
-'    o.Director = "[Director]"
+    '    o.Categories = CreateObject("roArray", 10, true)
+    '    o.Categories.Push("[Category1]")
+    '    o.Categories.Push("[Category2]")
+    '    o.Categories.Push("[Category3]")
+    '    o.Actors = CreateObject("roArray", 10, true)
+    '    o.Actors.Push("[Actor1]")
+    '    o.Actors.Push("[Actor2]")
+    '    o.Actors.Push("[Actor3]")
+    '    o.Director = "[Director]"
     screen.SetContent(o)
     screen.Show()
     
     screen.setProgressIndicator(250, 1000)
     while true
         msg = wait(0, port)
-        if msg.isScreenClosed() Then
+        if msg.isScreenClosed() then
             exit while
         else if msg.isButtonPressed()
             idx = msg.GetIndex()
@@ -64,4 +65,4 @@ Function VideoInfoScreen(videoId as Integer)
     b_print(invalid, -1)
     m.videoInfoScreen = invalid
     return -1
-End Function
+end function

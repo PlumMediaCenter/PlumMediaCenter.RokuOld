@@ -1,8 +1,9 @@
 function MainGrid()
-     'if the video grid has not yet been created, create it
-    If m.videoGrid = invalid Then
+    'if the video grid has not yet been created, create it
+    if m.videoGrid = invalid then
         m.videoGrid = CreateObject("roGridScreen")
-    End If 
+        SetAuthHeader(m.videoGrid)
+    end if 
     'grab the videoGrid from the global variables
     roGridScreen = m.videoGrid
     port = CreateObject("roMessagePort")
@@ -14,7 +15,7 @@ function MainGrid()
     categoryNames = API_GetCategoryNames()
     b_printc("Server said it has these categories: ", categoryNames)
     categories = API_GetCategories(categoryNames)
-
+    
     'load the library from the server. This will replace the global library object with a new one from the server
     'LoadLibrary()
     
@@ -24,7 +25,7 @@ function MainGrid()
     
     'assume that the first item in the list is the 'recently watched' category
     recentlyWatchedCategory = categories[categoryNames[0]]
-    print recentlyWatchedCategory
+    
     tiles = GetMediaTypeVideoGridTiles(recentlyWatchedCategory.videos)
     grid.addRow(categoryNames[0], tiles)
     
@@ -40,8 +41,8 @@ function MainGrid()
         SDPosterUrl: "pkg:/images/search.sd.png"
         HDPosterUrl: "pkg:/images/search.hd.png"
     }))
-   'load any search results into the list as well
-    if b_size(m.searchResults) > 0 
+    'load any search results into the list as well
+    if b_size(m.searchResults) > 0 then
         for each video in m.searchResults
             searchList.Push(GetMediaTypeVideoGridTile(video))
         end for
@@ -61,7 +62,7 @@ function MainGrid()
             grid.addRow(categoryName, GetMediaTypeVideoGridTiles(category.videos))
         end if
     end for
-   
+    
     '
     ' Add settings
     '
@@ -94,7 +95,7 @@ function MainGrid()
             'try to update the server
             success = API_UpdateServer()
             waitMessage.close()
-            if success = true
+            if success = true then
                 ShowMessage("", "Server was successfully updated")
             else
                 ShowMessage("", "There was an issue while updating the server")
@@ -102,54 +103,52 @@ function MainGrid()
             MainGrid()
         end function
     }))
-
+    
     grid.addRow("Settings", settingsList)
-   
+    
     roGridScreen.Show() 
     
     grid.draw(roGridScreen)
     'if there is at least one search result, select that first item
-    if b_size(m.searchResults) > 0
+    if b_size(m.searchResults) > 0 then
         roGridScreen.SetFocusedListItem(0,1)
     end if
     
     'hide the message screen now that the grid has been shown
     messageScreen.Close()
-
+    
     'by default, select the search icon since that's the one that is highlighted on page load
     selectedTile = grid.getItem(0, 0)
     while true
         msg = wait(0, port)
         print "message received";msg
-        If type(msg) = "roGridScreenEvent" Then
-            If msg.isScreenClosed() Then
-                Return -1
-            Else If msg.isListItemFocused()
+        if type(msg) = "roGridScreenEvent" then
+            if msg.isScreenClosed() then
+                return -1
+            else if msg.isListItemFocused() then
                 rowNumber = msg.GetIndex()
                 columnNumber = msg.GetData()
                 
                 selectedTile = grid.getItem(rowNumber, columnNumber)
                 print concat("Main grid item focused. Row: ",rowNumber,", Col: ",columnNumber)
-            else if msg.isRemoteKeyPressed()
+            else if msg.isRemoteKeyPressed() then
                 keyCode = msg.GetIndex()
                 print concat("Remote key was pressed: ",keyCode)
                 
-                 if selectedTile <> invalid
+                if selectedTile <> invalid then
                     'play button was pressed
-                    if keyCode = C_BUTTON_PLAY()
+                    if keyCode = C_BUTTON_PLAY() then
                         'fire the onPlay function of the tile
                         selectedTile.onPlay()
                     end if
                 end if
-             Else If msg.isListItemSelected()
-               if selectedTile <> invalid
+            else if msg.isListItemSelected() then
+                if selectedTile <> invalid then
                     'fire the onSelect function of the tile
                     selectedTile.onSelect()
                 end if
-               'do nothing
-            End if
-        End if
-    End While
-
-
+                'do nothing
+            end if
+        end if
+    end while
 end function

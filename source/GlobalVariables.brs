@@ -14,6 +14,26 @@ function g_baseUrl(value="__invalid") as dynamic
     return invalid
 end function
 
+function g_username(value="__invalid") as dynamic
+    if b_toString(value) = "__invalid" then
+        registryValue = b_getRegistryValue("username")
+        return registryValue
+    else
+        b_setRegistryValue("username", value)
+    end if
+    return invalid
+end function
+
+function g_password(value="__invalid") as dynamic
+    if b_toString(value) = "__invalid" then
+        registryValue = b_getRegistryValue("password")
+        return registryValue
+    else
+        b_setRegistryValue("password", value)
+    end if
+    return invalid
+end function
+
 '
 ' Gets or sets the autoplay duration. A duration of 0 is instant, a duration of -1 is disabled
 function g_autoplayDuration(value="__invalid") as dynamic

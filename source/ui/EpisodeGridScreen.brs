@@ -1,10 +1,11 @@
-Function EpisodeGridScreen(tvShowVideoId as Integer)
+function EpisodeGridScreen(tvShowVideoId as integer)
     print "Show tv episodes"
     messageScreen =  GetNewMessageScreen("", "Retrieving tv episodes...")
     port = CreateObject("roMessagePort")
-    If m.episodeScreen = invalid Then
+    if m.episodeScreen = invalid then
         m.episodeScreen = CreateObject("roPosterScreen")
-    End If     
+        SetAuthHeader(m.episodeScreen)
+    end if     
     show = API_GetTvShow(tvShowVideoId)  
     episodes = API_GetTvEpisodes(tvShowVideoId)  
     'get the video id of the video that should be focused in the episode grid as the one to watch
@@ -13,24 +14,24 @@ Function EpisodeGridScreen(tvShowVideoId as Integer)
     eScreen = m.episodeScreen
     eScreen.SetMessagePort(port) 
     episodeList = []
-   
+    
     'these two should be populated if there is a tv episode that should be played next. otherwise, it defaults to the first episode in the list
     nextEpisodeIndex = 0
     episodeIndex = 0 
-    For Each episode in episodes
+    for each episode in episodes
         'if this is the episode to watch, save its position for later when we create the grid
-        If episode.videoId = nextEpisodeVideoId Then
+        if episode.videoId = nextEpisodeVideoId then
             nextEpisodeIndex = episodeIndex
-        End If
-       runtime = invalid
-       If episode.runtime > 0 Then
+        end if
+        runtime = invalid
+        if episode.runtime > 0 then
             episodeRuntimeMinutes = b_ceil(episode.runtime / 60)
-            if episodeRuntimeMinutes <= 1
+            if episodeRuntimeMinutes <= 1 then
                 runtime = "Less than 1 minute"
             else
                 runtime = concat(episodeRuntimeMinutes, " minutes")
             end if
-        End If
+        end if
         o = CreateObject("roAssociativeArray")
         
         o.ContentType = "movie"
@@ -58,9 +59,9 @@ Function EpisodeGridScreen(tvShowVideoId as Integer)
         o.Director = "[Director]"
         episodeList.Push(o)
         episodeIndex = episodeIndex + 1
-    End For
-   
-   'add the list of episodes to the posterScreen
+    end for
+    
+    'add the list of episodes to the posterScreen
     eScreen.SetContentList(episodeList)
     'set the grid to wide so the episode pictures look better
     eScreen.SetListStyle("flat-episodic-16x9")
@@ -76,25 +77,25 @@ Function EpisodeGridScreen(tvShowVideoId as Integer)
     episodeIndex = nextEpisodeIndex
     while true
         msg = wait(0, port)
-        If msg.isScreenClosed() then
+        if msg.isScreenClosed() then
             m.episodeScreen = invalid
-            Return -1
-        Else If msg.isListItemFocused()
+            return -1
+        else if msg.isListItemFocused() then
             print "Focused msg: ";msg.GetMessage()
             print "row: ";msg.GetData();
             print " col: ";msg.GetIndex()
             episodeIndex = msg.GetIndex()
-         Else If msg.isListItemSelected()
+        else if msg.isListItemSelected() then
             print "Selected Episode Index: ";msg.GetIndex()
             episode = episodeList[episodeIndex]
             PlayVideo(episode)
             'whenever the video has finished playing, reload this grid
-            Return EpisodeGridScreen(tvShowVideoId) 
+            return EpisodeGridScreen(tvShowVideoId) 
         else if msg.isRemoteKeyPressed() and msg.GetIndex() = C_BUTTON_PLAY() then
             episode = episodeList[episodeIndex]
             PlayVideo(episode)
             'whenever the video has finished playing, reload this grid
-            Return EpisodeGridScreen(tvShowVideoId) 
-        End If
-    End While
-End Function
+            return EpisodeGridScreen(tvShowVideoId) 
+        end if
+    end while
+end function
