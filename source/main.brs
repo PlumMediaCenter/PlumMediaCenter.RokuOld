@@ -1,11 +1,3 @@
-function beforeEverything()
-    'VideoInfoScreen(4688)
-    '    g_baseUrl("http://192.168.1.26:8080/PlumMediaCenter/")
-    '    video = API_GetVideo(4712)
-    '    completeVideo(video)
-    '    return -1
-end function
-
 sub Main()
     'set the main theme of the application
     SetTheme()
@@ -17,9 +9,7 @@ sub Main()
     
     'collect the message screens so we can close them all in one sweep, because it gets a bit jumpy otherwise
     messageScreens = []
-    
-    beforeEverything()
-    PrintIt("Hello")
+
     'make sure we have a url to the server
     CheckConfiguration()
     skipVersionComparison = false
