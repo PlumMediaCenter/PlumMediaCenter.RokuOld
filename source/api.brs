@@ -164,7 +164,12 @@ sub API_SetVideoProgress(videoId as integer, seconds as integer)
     strVideoId = videoId.ToStr()
     url = g_baseUrl() + "api/SetVideoProgress.php?videoId=" + strVideoId + "&seconds=" + strSeconds
     result = GetJSON(url)
-    success = result.success
+    if result = invalid then
+        success = false
+    else
+        success = result.success
+    end if
+
     print "API-SetVideoProgress: videoId=";strVideoId;", seconds=";strSeconds;", success=";success
 end sub
 
@@ -175,7 +180,11 @@ sub API_SetVideoCompleted(videoId as integer)
     strVideoId = videoId.ToStr()
     url = g_baseUrl() + "api/SetVideoProgress.php?videoId=" + strVideoId + "&finished=true"
     result = GetJSON(url)
-    success = result.success
+    if result = invalid then
+        success = false
+    else
+        success = result.success
+    end if
     print "API-SetVideoProgress completed: videoId=";strVideoId;", success=";success
 end sub
 
