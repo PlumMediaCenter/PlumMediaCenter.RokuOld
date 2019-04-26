@@ -22,10 +22,10 @@ function lib_GetGridScreenMovie(video)
     o.ReleaseDate = video.year
     'o.Length = 5400
     o.Actors = []
-    For Each actor in video.actorList
+    for each actor in video.actorList
         name = actor.name
         o.Actors.push(name)
-    End For
+    end for
     o.Director = "[Director]"
     return o
 end function
@@ -44,20 +44,20 @@ function lib_GetGridScreenTvShow(video)
     o.NumEpisodes = video.episodeCount
     'o.StarRating = "75"
     o.ReleaseDate = video.year
-    o.TextAttrs = { 
-        Color:"#FFCCCCCC", 
-    Font:"Small", 
-    HAlign:"HCenter", 
-    VAlign:"VCenter", 
-    Direction:"LeftToRight" 
+    o.TextAttrs = {
+        Color:"#FFCCCCCC",
+        Font:"Small",
+        HAlign:"HCenter",
+        VAlign:"VCenter",
+        Direction:"LeftToRight"
     }
     'o.Length = 5400
     o.Actors = []
-    
-    For Each actor in video.actorList
-        name = actor.name   
+
+    for each actor in video.actorList
+        name = actor.name
         o.Actors.push(name)
-    End For
+    end for
     o.Director = "[Director]"
     return o
 end function
@@ -76,10 +76,10 @@ function lib_GetGridScreenTvEpisode(video)
     o.ReleaseDate = video.year
     'o.Length = 5400
     o.Actors = []
-    For Each actor in video.actorList
+    for each actor in video.actorList
         name = actor.name
         o.Actors.push(name)
-    End For
+    end for
     o.Director = "[Director]"
     return o
 end function

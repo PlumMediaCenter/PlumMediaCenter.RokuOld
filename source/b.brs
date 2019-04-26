@@ -1,40 +1,40 @@
 '
 ' Shows the user a message and waits until they click ok
-Sub b_alert(message as string) 
+sub b_alert(message as string)
     print "Alerting: '" + message + "'"
     port = CreateObject("roMessagePort")
     dialog = CreateObject("roMessageDialog")
-    dialog.SetMessagePort(port) 
+    dialog.SetMessagePort(port)
     'dialog.SetTitle(messageTitle)
     dialog.SetText(message)
- 
+
     dialog.AddButton(1, "Ok")
     dialog.EnableBackButton(false)
     dialog.Show()
-    While True
+    while True
         dlgMsg = wait(0, dialog.GetMessagePort())
-        If type(dlgMsg) = "roMessageDialogEvent"
+        if type(dlgMsg) = "roMessageDialogEvent"
             if dlgMsg.isButtonPressed()
                 exit while
-            end If
-        end If
-    end While
-end Sub
+            end if
+        end if
+    end while
+end sub
 
-function b_ceil(val as integer)
-    ceiling = val
-    if Int(val) = val 
-        ceiling = val
-    else 
-        ceiling = Int(val) + 1
+function b_ceil(value as integer)
+    ceiling = value
+    if Int(value) = value
+        ceiling = value
+    else
+        ceiling = Int(value) + 1
     end if
     return ceiling
 end function
 
 
 '
-' Prompts the user to choose from the specified options. 
-' @param {string} message - the message 
+' Prompts the user to choose from the specified options.
+' @param {string} message - the message
 ' @param {int} selectedItemIndex - the index of the item that should be selected by default
 ' @param ... pass in a string for each option
 ' @return {int} - the zero based index of the item selected, where 0 is the first option
@@ -42,7 +42,7 @@ function b_choose(message, selectedItemIndex, a=invalid,b=invalid,c=invalid,d=in
     print b_concat("Making user choose: '", message)
     port = CreateObject("roMessagePort")
     dialog = CreateObject("roMessageDialog")
-    dialog.SetMessagePort(port) 
+    dialog.SetMessagePort(port)
     dialog.EnableBackButton(true)
     'dialog.SetTitle(messageTitle)
     dialog.SetText(message)
@@ -57,25 +57,25 @@ function b_choose(message, selectedItemIndex, a=invalid,b=invalid,c=invalid,d=in
     end for
     dialog.SetFocusedMenuItem(selectedItemIndex)
     dialog.Show()
-    While True
+    while True
         dlgMsg = wait(0, dialog.GetMessagePort())
-        If type(dlgMsg) = "roMessageDialogEvent"
+        if type(dlgMsg) = "roMessageDialogEvent"
             if dlgMsg.isButtonPressed()
                 selectedIndex = dlgMsg.GetIndex()
                 return selectedIndex
-            Else If dlgMsg.isScreenClosed()
+            else if dlgMsg.isScreenClosed()
                 exit while
-            end If
-        end If
-    end While
+            end if
+        end if
+    end while
     'default to return false
-    print "User chose cancel or back" 
-    Return -1 
+    print "User chose cancel or back"
+    return -1
 end function
 
 '
 ' Concatenates the params together, while calling toString on each one of them so that it won't throw type errors like
-' when using the + operator. 
+' when using the + operator.
 ' @param {...dynamic} - pass in up to 12 parameters to be concatenated together
 '
 function b_concat(a=invalid,b=invalid,c=invalid,d=invalid,e=invalid,f=invalid,g=invalid,h=invalid,i=invalid,j=invalid,k=invalid,l=invalid)
@@ -121,7 +121,7 @@ end function
 ' @param string name - the name of the registry key
 ' @param {string} [section="Settings"] - the section the value is saved in. If not specified, the default is used
 '
-function b_deleteRegistryValue(name as String, section="Settings") as Void
+function b_deleteRegistryValue(name as string, section="Settings") as void
     sec = CreateObject("roRegistrySection", section)
     sec.Delete(name)
     sec.Flush()
@@ -132,7 +132,7 @@ end function
 ' @param {string} value - the value to be escaped
 ' @return {string} - the value in url escaped form
 '*
-function b_escapeUrl(value) as String
+function b_escapeUrl(value) as string
     value = b_toString(value)
     o = CreateObject("roUrlTransfer")
     return o.Escape(value)
@@ -143,12 +143,12 @@ end function
 ' @param string name - the name of the variable to be saved in the registry
 ' @param {string} [section="Settings"] - the section to save the value into. If not specified, the default is used
 '
-function b_getRegistryValue(name as String, section="Settings") as dynamic
+function b_getRegistryValue(name as string, section="Settings") as dynamic
     sec = CreateObject("roRegistrySection", section)
-     if sec.Exists(name)  
-         return sec.Read(name)
-     endif
-     return invalid
+    if sec.Exists(name)
+        return sec.Read(name)
+    end if
+    return invalid
 end function
 
 
@@ -168,56 +168,56 @@ function b_iff(condition, trueValue, falseValue)
 end function
 
 
-function b_isXmlElement(value as Dynamic) as Boolean
-    Return b_isValid(value) And GetInterface(value, "ifXMLElement") <> invalid
+function b_isXmlElement(value as dynamic) as boolean
+    return b_isValid(value) and GetInterface(value, "ifXMLElement") <> invalid
 end function
 
-function b_isfunction(value as Dynamic) as Boolean
-    Return b_isValid(value) And GetInterface(value, "iffunction") <> invalid
+function b_isfunction(value as dynamic) as boolean
+    return b_isValid(value) and GetInterface(value, "iffunction") <> invalid
 end function
 
-function b_isBoolean(value as Dynamic) as Boolean
-    Return b_isValid(value) And GetInterface(value, "ifBoolean") <> invalid
+function b_isBoolean(value as dynamic) as boolean
+    return b_isValid(value) and GetInterface(value, "ifBoolean") <> invalid
 end function
 
-function b_isInteger(value as Dynamic) as Boolean
-    Return b_isValid(value) And GetInterface(value, "ifInt") <> invalid And (Type(value) = "roInt" Or Type(value) = "roInteger" Or Type(value) = "Integer")
+function b_isInteger(value as dynamic) as boolean
+    return b_isValid(value) and GetInterface(value, "ifInt") <> invalid and (Type(value) = "roInt" or Type(value) = "roInteger" or Type(value) = "Integer")
 end function
 
-function b_isFloat(value as Dynamic) as Boolean
-    Return b_isValid(value) And (GetInterface(value, "ifFloat") <> invalid Or (Type(value) = "roFloat" Or Type(value) = "Float"))
+function b_isFloat(value as dynamic) as boolean
+    return b_isValid(value) and (GetInterface(value, "ifFloat") <> invalid or (Type(value) = "roFloat" or Type(value) = "Float"))
 end function
 
-function b_isDouble(value as Dynamic) as Boolean
-    Return b_isValid(value) And (GetInterface(value, "ifDouble") <> invalid Or (Type(value) = "roDouble" Or Type(value) = "roIntrinsicDouble" Or Type(value) = "Double"))
+function b_isDouble(value as dynamic) as boolean
+    return b_isValid(value) and (GetInterface(value, "ifDouble") <> invalid or (Type(value) = "roDouble" or Type(value) = "roIntrinsicDouble" or Type(value) = "Double"))
 end function
 
-function b_isList(value as Dynamic) as Boolean
-    Return b_isValid(value) And GetInterface(value, "ifList") <> invalid
+function b_isList(value as dynamic) as boolean
+    return b_isValid(value) and GetInterface(value, "ifList") <> invalid
 end function
 
-function b_isArray(value as Dynamic) as Boolean
-    Return b_isValid(value) And GetInterface(value, "ifArray") <> invalid
+function b_isArray(value as dynamic) as boolean
+    return b_isValid(value) and GetInterface(value, "ifArray") <> invalid
 end function
 
-function b_isAssociativeArray(value as Dynamic) as Boolean
-    Return b_isValid(value) And GetInterface(value, "ifAssociativeArray") <> invalid
+function b_isAssociativeArray(value as dynamic) as boolean
+    return b_isValid(value) and GetInterface(value, "ifAssociativeArray") <> invalid
 end function
 
-function b_isString(value as Dynamic) as Boolean
-    Return b_isValid(value) And GetInterface(value, "ifString") <> invalid
+function b_isString(value as dynamic) as boolean
+    return b_isValid(value) and GetInterface(value, "ifString") <> invalid
 end function
 
-function b_isDateTime(value as Dynamic) as Boolean
-    Return b_isValid(value) And (GetInterface(value, "ifDateTime") <> invalid Or Type(value) = "roDateTime")
+function b_isDateTime(value as dynamic) as boolean
+    return b_isValid(value) and (GetInterface(value, "ifDateTime") <> invalid or Type(value) = "roDateTime")
 end function
 
-function b_isValid(value as Dynamic) as Boolean
-    Return Type(value) <> "<uninitialized>" And value <> invalid
+function b_isValid(value as dynamic) as boolean
+    return Type(value) <> "<uninitialized>" and value <> invalid
 end function
 
-function b_isInvalid(value as Dynamic) as Boolean
-    Return not b_isValid(value)
+function b_isInvalid(value as dynamic) as boolean
+    return not b_isValid(value)
 end function
 
 '
@@ -239,15 +239,15 @@ function b_jsonStringify(obj as dynamic)
     return SimpleJSONBuilder(obj)
 end function
 
-Function SimpleJSONBuilder( jsonArray As Object ) As String
-    Return SimpleJSONAssociativeArray( jsonArray )
-End Function
+function SimpleJSONBuilder( jsonArray as object ) as string
+    return SimpleJSONAssociativeArray( jsonArray )
+end function
 
 
-Function SimpleJSONAssociativeArray( jsonArray As Object ) As String
+function SimpleJSONAssociativeArray( jsonArray as object ) as string
     jsonString = "{"
-    
-    For Each key in jsonArray
+
+    for each key in jsonArray
         jsonString = jsonString + Chr(34) + key + Chr(34) + ":"
         value = jsonArray[ key ]
         if b_isInvalid(value) then
@@ -264,48 +264,49 @@ Function SimpleJSONAssociativeArray( jsonArray As Object ) As String
             jsonString = jsonString + SimpleJSONBuilder( value )
         end if
         jsonString = jsonString + ","
-    Next
-    If Right( jsonString, 1 ) = "," Then
+    next
+    if Right( jsonString, 1 ) = "," then
         jsonString = Left( jsonString, Len( jsonString ) - 1 )
-    End If
-    
+    end if
+    b_name = "hello"
+
     jsonString = jsonString + "}"
-    Return jsonString
-End Function
+    return jsonString
+end function
 
 
-Function SimpleJSONArray( jsonArray As Object ) As String
+function SimpleJSONArray( jsonArray as object ) as string
     jsonString = "["
-    
-    For Each value in jsonArray
-        If Type( value ) = "roString" Then
-            jsonString = jsonString + Chr(34) + value + Chr(34)
-        Else If Type( value ) = "roInt" Or Type( value ) = "roFloat" Then
-            jsonString = jsonString + value.ToStr()
-        Else If Type( value ) = "roBoolean" Then
-            jsonString = jsonString + IIf( value, "true", "false" )
-        Else If Type( value ) = "roArray" Then
-            jsonString = jsonString + SimpleJSONArray( value )
-        Else If Type( value ) = "roAssociativeArray" Then
-            jsonString = jsonString + SimpleJSONAssociativeArray( value )
-        End If
-        jsonString = jsonString + ","
-    Next
-    If Right( jsonString, 1 ) = "," Then
-        jsonString = Left( jsonString, Len( jsonString ) - 1 )
-    End If
-    
-    jsonString = jsonString + "]"
-    Return jsonString
-End Function
 
-Function IIf( Condition, Result1, Result2 )
-    If Condition Then
-        Return Result1
-    Else
-        Return Result2
-    End If
-End Function
+    for each value in jsonArray
+        if Type( value ) = "roString" then
+            jsonString = jsonString + Chr(34) + value + Chr(34)
+        else if Type( value ) = "roInt" or Type( value ) = "roFloat" then
+            jsonString = jsonString + value.ToStr()
+        else if Type( value ) = "roBoolean" then
+            jsonString = jsonString + IIf( value, "true", "false" )
+        else if Type( value ) = "roArray" then
+            jsonString = jsonString + SimpleJSONArray( value )
+        else if Type( value ) = "roAssociativeArray" then
+            jsonString = jsonString + SimpleJSONAssociativeArray( value )
+        end if
+        jsonString = jsonString + ","
+    next
+    if Right( jsonString, 1 ) = "," then
+        jsonString = Left( jsonString, Len( jsonString ) - 1 )
+    end if
+
+    jsonString = jsonString + "]"
+    return jsonString
+end function
+
+function IIf( Condition, Result1, Result2 )
+    if Condition then
+        return Result1
+    else
+        return Result2
+    end if
+end function
 
 '
 ' Converts the value into an integer. This is helpful for passing in something that you are not sure of the type, like
@@ -338,7 +339,7 @@ end function
 
 '
 ' Combination of print and concat, without the b_print's changeInLevel option
-' 
+'
 function b_printc(a=invalid,b=invalid,c=invalid,d=invalid,e=invalid,f=invalid,g=invalid,h=invalid,i=invalid,j=invalid,k=invalid,l=invalid)
     return b_print(b_concat(a,b,c,d,e,f,g,h,i,j,k,l))
 end function
@@ -359,10 +360,10 @@ end function
 ' count the number of items in an array or associative array
 '''
 function b_size(collection=invalid)
-    count = 0 
+    count = 0
     if collection = invalid
         count = 0
-    'if it has a count function, use that
+        'if it has a count function, use that
     else if b_isArray(collection)
         count = collection.Count()
     else
@@ -379,7 +380,7 @@ end function
 ' This provides a way to get a notification every n seconds while still getting remote events
 ' @param {object} obj - the configuration object. The following properties are required, but you can also
 '                       pass in any additional properties, as they will be needed if you need to access out-of-scope values
-                        'from the callbacks. This entire object is passed in to the callbacks
+'from the callbacks. This entire object is passed in to the callbacks
 '                       {
 '                            {integer} durationMilliseconds - the total duration that this loop should run
 '                            {integer} intervalMilliseconds - the number of milliseconds between each time the notify function is called
@@ -387,26 +388,26 @@ end function
 '                            {function(obj, message)} messageCallback - a function called everytime a message is raised on the port.
 '                                                                        returning anything other than invalid from this function will
 '                                                                        cause the loop to terminate and return that value
-'                            {function(obj)} intervalCallback - a function called every time the interval happens.  
+'                            {function(obj)} intervalCallback - a function called every time the interval happens.
 '                                                            returning anything other than invalid from this function will
 '                                                            cause the loop to terminate and return that value
-      
-' @return {object} - returns the result of one of the callbacks, or invalid when finished                       
+
+' @return {object} - returns the result of one of the callbacks, or invalid when finished
 '
-function b_timedInterval(obj as dynamic) 
-    
+function b_timedInterval(obj as dynamic)
+
     if b_isInvalid(obj.durationMilliseconds) then
         print "obj.durationMilliseconds is invalid"
-    else 
+    else
         print "obj.durationMilliseconds is valid";obj.durationMilliseconds
     end if
     obj.durationMilliseconds = b_iff(b_isInvalid(obj.durationMilliseconds), 10000, obj.durationMilliseconds)
     obj.intervalMilliseconds = b_iff(b_isInvalid(obj.intervalMilliseconds), 1000, obj.intervalMilliseconds)
     obj.port = b_iff(b_isInvalid(obj.port),  CreateObject("roMessagePort"), obj.port)
-    
+
     clock = CreateObject("roTimespan")
     lastCall = clock.TotalMilliseconds() + obj.durationMilliseconds
-    
+
     next_call = clock.TotalMilliseconds() + obj.intervalMilliseconds
     while true
         msg = wait(250, obj.port) ' wait for a message
@@ -422,7 +423,7 @@ function b_timedInterval(obj as dynamic)
                 return invalid
             end if
             result = obj.intervalCallback(obj)
-             if b_isValid(result) then
+            if b_isValid(result) then
                 return result
             end if
             next_call = clock.TotalMilliseconds() + obj.intervalMilliseconds
@@ -436,17 +437,17 @@ end function
 ' @param {object} item - the item to be converted to a string
 ' @return {string} - the item in its string representation
 '*
-function b_toString(item) as String
+function b_toString(item) as string
     result = ""
     itemType = type(item)
-    
+
     if item = invalid
         result = "invalid"
     else if itemType = "String"
         result = item
     else if itemType = "roString"
         result = item.GetString()
-    else if itemType = "roAssociativeArray" 
+    else if itemType = "roAssociativeArray"
         result = b_jsonStringify(item)
     else if itemType = "Boolean"
         result = iff(item, "true", "false")
@@ -474,9 +475,9 @@ function b_toString(item) as String
     return result
 end function
 
-function b_urlEncode(str)
+function b_urlEncode(stringToEncode)
     o = CreateObject("roUrlTransfer")
-    return o.Escape(str)
+    return o.Escape(stringToEncode)
 end function
 
 

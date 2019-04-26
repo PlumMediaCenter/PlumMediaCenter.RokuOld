@@ -1,11 +1,11 @@
 
 
 function Get(sUrl as string) as object
-    http = CreateObject("roUrlTransfer") 
+    http = CreateObject("roUrlTransfer")
     http.SetURL(sUrl)
-    
+
     SetAuthHeader(http)
-    result = http.GetToString() 
+    result = http.GetToString()
     return result
 end function
 
@@ -14,11 +14,11 @@ end function
 '
 function SetAuthHeader(httpAgent) as object
     'assume all requests are protected by basic authentication
-    ba = CreateObject("roByteArray") 
+    ba = CreateObject("roByteArray")
     header = b_concat(g_username(), ":", g_password())
     ba.FromAsciiString(header)
-    'ba.FromAsciiString("bronley:romantic") 
-    httpAgent.AddHeader("Authorization", "Basic " + ba.ToBase64String()) 
+    'ba.FromAsciiString("bronley:romantic")
+    httpAgent.AddHeader("Authorization", "Basic " + ba.ToBase64String())
     return httpAgent
 end function
 
@@ -30,11 +30,11 @@ end function
 function GetJSON(sUrl as string) as object
     resultText = Get(sUrl)
     obj = ParseJson(resultText)
-    return obj    
+    return obj
 end function
 
 '
-' For some reason, brightscript doesn't like to convert json into a boolean value. 
+' For some reason, brightscript doesn't like to convert json into a boolean value.
 ' Perform a web request and expect a boolean value back, either true or false.
 '
 function GetJSONBoolean(sUrl as string) as boolean
@@ -55,16 +55,16 @@ function Concat(a=invalid,b=invalid,c=invalid,d=invalid,e=invalid,f=invalid,g=in
 end function
 
 '
-' Sends a nonblocking request in which the return result is not important. 
+' Sends a nonblocking request in which the return result is not important.
 ' This is useful for update requests and such.
 '
 sub FireNonBlockingRequest(sUrl as string)
     'print "FireNonBlockingRequest: ";sUrl
-    http = CreateObject("roUrlTransfer") 
+    http = CreateObject("roUrlTransfer")
     SetAuthHeader(http)
     http.SetURL(sUrl)
-    'send the request 
-    http.AsyncGetToString() 
+    'send the request
+    http.AsyncGetToString()
 end sub
 
 function GetMediaTypeVideoGridTiles(videos)
@@ -72,7 +72,7 @@ function GetMediaTypeVideoGridTiles(videos)
     'break the videos out into movies or tv shows
     for each video in videos
         'b_printc("viewing video", video)
-        if b_isAssociativeArray(video) then 
+        if b_isAssociativeArray(video) then
             tile = GetMediaTypeVideoGridTile(video)
             tiles.Push(tile)
         end if
@@ -85,32 +85,32 @@ function GetNewMessageScreen(messageTitle = "", message = "") as object
     dialog.SetTitle(messageTitle)
     dialog.SetText(message)
     dialog.Show()
-    dialog.ShowBusyAnimation() 
+    dialog.ShowBusyAnimation()
     return dialog
 end function
 
 sub ShowMessage(messageTitle as string, message as string)
     port = CreateObject("roMessagePort")
     dialog = CreateObject("roMessageDialog")
-    dialog.SetMessagePort(port) 
+    dialog.SetMessagePort(port)
     dialog.SetTitle(messageTitle)
     dialog.SetText(message)
-    
+
     dialog.AddButton(1, "Ok")
     dialog.EnableBackButton(true)
     dialog.Show()
     while True
         dlgMsg = wait(0, dialog.GetMessagePort())
         if type(dlgMsg) = "roMessageDialogEvent"
-        if dlgMsg.isButtonPressed()
-        if dlgMsg.GetIndex() = 1
-        exit while
-    end if
-else if dlgMsg.isScreenClosed()
-    exit while
-end if
-end if
-end while
+            if dlgMsg.isButtonPressed()
+                if dlgMsg.GetIndex() = 1
+                    exit while
+                end if
+            else if dlgMsg.isScreenClosed()
+                exit while
+            end if
+        end if
+    end while
 end sub
 
 '
@@ -120,10 +120,10 @@ function Confirm(message as string, yesText as string, noText as string) as bool
     print "Confirming: '" + message + "', '" + yesText + "', " + noText + "'"
     port = CreateObject("roMessagePort")
     dialog = CreateObject("roMessageDialog")
-    dialog.SetMessagePort(port) 
+    dialog.SetMessagePort(port)
     'dialog.SetTitle(messageTitle)
     dialog.SetText(message)
-    
+
     dialog.AddButton(1, yesText)
     dialog.AddButton(0, noText)
     dialog.EnableBackButton(true)
@@ -131,23 +131,23 @@ function Confirm(message as string, yesText as string, noText as string) as bool
     while True
         dlgMsg = wait(0, dialog.GetMessagePort())
         if type(dlgMsg) = "roMessageDialogEvent"
-        if dlgMsg.isButtonPressed()
-        if dlgMsg.GetIndex() = 0
-        print "User chose ";noText 
-        return False
-    end if
-    if dlgMsg.GetIndex() = 1
-    print "User chose ";yesText 
-    return True
-end if
-else if dlgMsg.isScreenClosed()
-exit while
-end if
-end if
-end while
-'default to return false
-print "User chose cancel or back, which means ";noText 
-return false
+            if dlgMsg.isButtonPressed()
+                if dlgMsg.GetIndex() = 0
+                    print "User chose ";noText
+                    return False
+                end if
+                if dlgMsg.GetIndex() = 1
+                    print "User chose ";yesText
+                    return True
+                end if
+            else if dlgMsg.isScreenClosed()
+                exit while
+            end if
+        end if
+    end while
+    'default to return false
+    print "User chose cancel or back, which means ";noText
+    return false
 end function
 
 '
@@ -157,10 +157,10 @@ function ConfirmWithCancel(message = "Confirm", yesText  = "Yes", noText  = "No"
     print b_concat("Confirming: '", message , "', '",yesText, "', ", noText, "', 'Cancel'", cancelText)
     port = CreateObject("roMessagePort")
     dialog = CreateObject("roMessageDialog")
-    dialog.SetMessagePort(port) 
+    dialog.SetMessagePort(port)
     'dialog.SetTitle(messageTitle)
     dialog.SetText(message)
-    
+
     dialog.AddButton(0, yesText)
     dialog.AddButton(1, noText)
     dialog.AddButton(2, cancelText)
@@ -169,24 +169,24 @@ function ConfirmWithCancel(message = "Confirm", yesText  = "Yes", noText  = "No"
     while True
         dlgMsg = wait(0, dialog.GetMessagePort())
         if type(dlgMsg) = "roMessageDialogEvent"
-        if dlgMsg.isButtonPressed()
-        print dlgMsg.getMessage()
-        if dlgMsg.GetIndex() = 0
-        return 1
-    end if
-    if dlgMsg.GetIndex() = 1
-    return 0
-end if
-if dlgMsg.GetIndex() = 2
-return -1
-end if
-else if dlgMsg.isScreenClosed()
-exit while
-end if
-end if
-end while
-'default to return cancel
-return -1
+            if dlgMsg.isButtonPressed()
+                print dlgMsg.getMessage()
+                if dlgMsg.GetIndex() = 0
+                    return 1
+                end if
+                if dlgMsg.GetIndex() = 1
+                    return 0
+                end if
+                if dlgMsg.GetIndex() = 2
+                    return -1
+                end if
+            else if dlgMsg.isScreenClosed()
+                exit while
+            end if
+        end if
+    end while
+    'default to return cancel
+    return -1
 end function
 
 '
@@ -200,7 +200,7 @@ function GetHourMinuteSecondString(pSeconds) as string
     hours = Int(pSeconds / 3600)
     minutes = Int((pSeconds / 60) mod 60)
     seconds = pSeconds mod 60
-    
+
     resultString = ""
     'Add the hours, if there are any
     if hours > 0 then
@@ -212,7 +212,7 @@ function GetHourMinuteSecondString(pSeconds) as string
     end if
     'add the seconds, if there are any
     if seconds > 0 then
-        resultString = resultString + seconds.ToStr() + " seconds"        
+        resultString = resultString + seconds.ToStr() + " seconds"
     end if
     return resultString.Trim()
 end function
@@ -238,7 +238,7 @@ function SortAssociativeArray(aa as object) as dynamic
         end if
         resultKeys = newResult
     end for
-    
+
     'actually construct the result array
     finalResult = []
     for each sortKey in resultKeys
@@ -249,15 +249,15 @@ end function
 
 function arrayMerge(a=invalid,b=invalid,c=invalid,d=invalid,e=invalid,f=invalid,g=invalid,h=invalid,i=invalid) as object
     result = []
-    
+
     params = [a,b,c,d,e,f,g,h,i]
-    
+
     for each param in params
         if param <> invalid
-        for each item in param
-            result.push(item)
-        end for
-    end if
-end for
-return result
+            for each item in param
+                result.push(item)
+            end for
+        end if
+    end for
+    return result
 end function

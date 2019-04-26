@@ -2,11 +2,11 @@ sub Main()
     'set the main theme of the application
     SetTheme()
     m.searchResults = []
-    
-    'add a default facade screen to the app so that the app will only close once this screen has been closed 
+
+    'add a default facade screen to the app so that the app will only close once this screen has been closed
     screenFacade = CreateObject("roGridScreen")
     screenFacade.show()
-    
+
     'collect the message screens so we can close them all in one sweep, because it gets a bit jumpy otherwise
     messageScreens = []
 
@@ -17,9 +17,9 @@ sub Main()
     print "Verifying that the server exists."
     messageScreen = GetNewMessageScreen("", "Connecting to server...")
     messageScreens.push(messageScreen)
-    
-    serverExists = API_ServerExists() 
-    if serverExists = False then 
+
+    serverExists = API_ServerExists()
+    if serverExists = False then
         confirmResult = Confirm("Unable to find PlumMediaCenter Server at the following url. Would you like to update the url? '" + g_baseUrl() + "'", "Yes", "No")
         if ConfirmResult = True then
             print "The user DOES want to fix the broken url. Prompting for that now.";
@@ -29,10 +29,10 @@ sub Main()
             print "The user does NOT want to fix the broken url. Continue as if the server was working"
         end if
     end if
-    
+
     'we know that the server exists....but now make sure that our version and the server's version are compatible
     messageScreen = GetNewMessageScreen("", "Verifying that the app is compatible with the current version of the server")
-    
+
     messageScreens.Push(messageScreen)
     'if we already know that we have had issues contacting the server, don't bother comparing version numbers....
     if skipVersionComparison = false then
@@ -43,12 +43,12 @@ sub Main()
             return
         end if
     end if
-    
-    'close all of the message screens. 
+
+    'close all of the message screens.
     for each messageScreen in messageScreens
         messageScreen.close()
     end for
-    
+
     'Show the video grid
     MainGrid()
     'exit the app gently so that the screen doesn't flash to black
@@ -57,7 +57,7 @@ sub Main()
 end sub
 
 '''
-' Compares the app version to the server version and determines if anything is out of sync. 
+' Compares the app version to the server version and determines if anything is out of sync.
 ' @return {boolean} - true if the application could keep processing, false if it should exit
 '''
 function compareVersionWithServer()
@@ -66,12 +66,12 @@ function compareVersionWithServer()
     appVersionParts = appVersion.Tokenize(".")
     appMajor = Val(appVersionParts[0])
     appMinor = Val(appVersionParts[1])
-    
+
     serverVersion = API_GetServerVersionNumber()
     serverVersionParts = serverVersion.Tokenize(".")
     serverMajor = Val(serverVersionParts[0])
     serverMinor = Val(serverVersionParts[1])
-    
+
     print concat("Comparing app version and server version: ", appVersion, " --- ", serverVersion)
     print concat(appMajor, " < ",serverMajor, " or ",appMinor ," < ",serverMinor)
     print concat( serverMajor, " < ",appMajor, " or ", serverMinor ," < ", appMinor)
@@ -94,7 +94,7 @@ function compareVersionWithServer()
         print "server is behind app"
         'server is behind the app
         choice = b_choose(b_concat("The server has a lower version than this app can handle. Server: ", serverVersion, "  Roku App: ", appVersion), 0, "Ignore (Don't update the server)", "Update the server now", "Change the server url", "Exit this app and don't update")
-        
+
         if choice = 0 then
             exitValue = true
         else if  choice = 1
@@ -122,7 +122,7 @@ function compareVersionWithServer()
             success = ServerUrlUpdateScreen()
             'try checking the version on the server again now that we have updated the url
             return compareVersionWithServer()
-        else 
+        else
             exitValue = false
         end if
         'the app and the server are within the same major/minor versions of each other. everything is ok
@@ -134,17 +134,17 @@ function compareVersionWithServer()
 end function
 
 '
-' Checks that all of the roku configuration 
+' Checks that all of the roku configuration
 '
 sub CheckConfiguration()
     print "Checking configuration settings"
-    
+
     if  g_baseUrl() = invalid or g_username() = invalid or g_password = invalid then
         print "PlumMediaCenter api url is not set. Prompting user to enter url."
         ShowMessage("Setup", "This app must be configured before it can be used. Please follow the instructions")
         print "User clicked ok on the initial setup screen"
         ServerUrlUpdateScreen()
-    else 
+    else
         print "Base URL is set."; g_baseUrl()
     end if
 end sub
@@ -176,9 +176,9 @@ end sub
 
 
 sub PlayVideo(pVideo as object)
-    
+
     'if this video is a tv show, then find the next episode to watch
-    if pVideo.mediaType = "TvShow" then 
+    if pVideo.mediaType = "TvShow" then
         messageScreen = GetNewMessageScreen("", "Loading next episode to watch...")
         episode = API_GetNextEpisode(pVideo.videoId)
         'hide the message screen
@@ -186,9 +186,9 @@ sub PlayVideo(pVideo as object)
         PlayVideo(episode)
         return
     end if
-    
+
     messageScreen = GetNewMessageScreen("", "Preparing video for playback...")
-    
+
     startSeconds = API_GetVideoProgress(pVideo.videoId)
     print "Start Seconds: ";startSeconds
     resume = true
@@ -205,7 +205,7 @@ sub PlayVideo(pVideo as object)
             resume = false
         else
             print "PlayVideo: cancel video playback"
-            return 
+            return
         end if
     end if
     if resume then
@@ -217,50 +217,50 @@ sub PlayVideo(pVideo as object)
     end if
     video  = CreateObject("roAssociativeArray")
     port = CreateObject("roMessagePort")
-    screen = CreateObject("roVideoScreen") 
+    screen = CreateObject("roVideoScreen")
     SetAuthHeader(screen)
-    ' Note: HDBranded controls whether the "HD" logo is displayed for a 
+    ' Note: HDBranded controls whether the "HD" logo is displayed for a
     '       title. This is separate from IsHD because its possible to
-    ' have an HD title where you don't want to show the HD logo 
-    ' branding for the title. Set these two as appropriate for 
+    ' have an HD title where you don't want to show the HD logo
+    ' branding for the title. Set these two as appropriate for
     ' your content
-    video.IsHD = true    
+    video.IsHD = true
     video.HDBranded = false
-    
+
     ' Note: The preferred way to specify stream info in v2.6 is to use
-    ' the Stream roAssociativeArray content meta data parameter. 
+    ' the Stream roAssociativeArray content meta data parameter.
     print "Play Video...Url: ";pVideo.url
-    video.Stream = { 
+    video.Stream = {
         url: pVideo.url
         bitrate:0
         StreamFormat:  "mp4"
     }
-    
-    ' now just tell the screen about the title to be played, set the 
-    ' message port for where you will receive events and call show to 
-    ' begin playback.  You should see a buffering screen and then 
-    ' playback will start immediately when we have enough data buffered. 
+
+    ' now just tell the screen about the title to be played, set the
+    ' message port for where you will receive events and call show to
+    ' begin playback.  You should see a buffering screen and then
+    ' playback will start immediately when we have enough data buffered.
     screen.SetContent(video)
     screen.SetMessagePort(port)
     'every n seconds, fire a position notification
     screen.SetPositionNotificationPeriod(3)
-    screen.Show() 
+    screen.Show()
     'hide the message screen
     messageScreen.Close()
-    
+
     m.lastVideoProgressUpdateTime = CreateObject("roDateTime")
-    ' Wait in a loop on the message port for events to be received.  
-    ' We will just quit the loop and Return to the calling function 
-    ' when the users terminates playback, but there are other things 
-    ' you could do here like monitor playback position and see events 
-    ' from the streaming player.  Look for status messages from the video 
-    ' player for status and failure events that occur during playback 
+    ' Wait in a loop on the message port for events to be received.
+    ' We will just quit the loop and Return to the calling function
+    ' when the users terminates playback, but there are other things
+    ' you could do here like monitor playback position and see events
+    ' from the streaming player.  Look for status messages from the video
+    ' player for status and failure events that occur during playback
     while true
         msg = wait(0, port)
-        
+
         if type(msg) = "roVideoScreenEvent" then
             if msg.isStreamStarted() and startMilliseconds > 0 then
-                print "Stream started. Seeking to milliseconds: "; startMilliseconds 
+                print "Stream started. Seeking to milliseconds: "; startMilliseconds
                 screen.Seek(startMilliseconds)
                 startMilliseconds = -1
             else if msg.isScreenClosed()
@@ -286,7 +286,7 @@ sub PlayVideo(pVideo as object)
                 exit while
             end if
         end if
-    end while 
+    end while
 end sub
 
 function completeVideo(video)
@@ -299,7 +299,7 @@ function completeVideo(video)
             print "video is show or episode"
             messageScreen = GetNewMessageScreen("", "Loading next episode to watch...")
             episode = API_GetNextEpisode(video.videoId)
-            
+
             'if we have just played the last episode, don't repeat it...
             if episode.videoId = video.videoId then
                 '

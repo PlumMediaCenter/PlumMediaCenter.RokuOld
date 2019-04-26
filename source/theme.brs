@@ -1,7 +1,7 @@
 '
 ' Sets the theme of the application
 '
-Sub SetTheme()
+sub SetTheme()
     'these are the standard values used throughout the theme. Some of the different pages need to have the values re-set to override
     'the defaults, so rather than changing the values twise, set the once here and reference them by value
     overhangSliceHD =  "pkg:/images/overhang_hd.png"
@@ -9,7 +9,7 @@ Sub SetTheme()
     greyBackgroundColor = "#363636"
     GridScreenOverhangHeightHD = "69"
     GridScreenOverhangHeightSD = "49"
-    
+
     'dark color pattern
     charcoal = "#293647"
     lime = "#c2cc4f"
@@ -17,16 +17,16 @@ Sub SetTheme()
     pink = "#b93976"
     purple = "#361f6d"
     teal = "#127aa1"
-    
-    
+
+
     'light color pattern
     lightBlue = "#dbf2fa"
     solidBlue = "#7ddcf0"
     lavender = "#95669c"
     deepPurple = "#553588"
-    tan = "#f0bd7e"
+    tanColor = "#f0bd7e"
     pink = "#fff3d9"
-    
+
     'apply the theme
     app = CreateObject("roAppManager")
     theme = CreateObject("roAssociativeArray")
@@ -40,6 +40,6 @@ Sub SetTheme()
     theme.GridScreenOverhangSliceHD = overhangSliceHD
     theme.GridScreenOverhangSliceSD = overhangSliceSD
     theme.GridScreenOverhangHeightHD = GridScreenOverhangHeightHD
-    theme.GridScreenOverhangHeightSD = GridScreenOverhangHeightSD 
-    app.SetTheme(theme)    
-End Sub
+    theme.GridScreenOverhangHeightSD = GridScreenOverhangHeightSD
+    app.SetTheme(theme)
+end sub

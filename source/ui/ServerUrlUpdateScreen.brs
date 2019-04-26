@@ -2,9 +2,9 @@ function ServerUrlUpdateScreen() as dynamic
     g_username(GetText("Username", "Enter your username", g_username()))
     g_password(GetText("Password", "Enter your password", g_password()))
     serverUrl = g_baseUrl()
-    If serverUrl = invalid Then
+    if serverUrl = invalid then
         serverUrl = "http://bronley.no-ip.biz:8081/PlumMediaCenter/"
-    End If
+    end if
     serverUrl = GetText("PlumMediaCenter Server URL", "Enter the url for the server running PlumMediaCenter.", serverUrl)
     'if the base url is missing the ending slash, add it
     endingCharacter = serverUrl.Right(1)
@@ -41,16 +41,16 @@ function GetText(title as string, displayText as string, defaultText = "") as dy
     screen = CreateObject("roKeyboardScreen")
     'set the default value of the keyboard screen
     screen.SetText(defaultText)
-    port = CreateObject("roMessagePort") 
+    port = CreateObject("roMessagePort")
     screen.SetMessagePort(port)
     screen.SetTitle(title)
     screen.SetDisplayText(displayText)
     screen.SetMaxLength(800)
     screen.AddButton(1, "Ok")
     screen.AddButton(2, "Cancel")
-    screen.Show() 
+    screen.Show()
     while true
-        msg = wait(0, screen.GetMessagePort()) 
+        msg = wait(0, screen.GetMessagePort())
         print "message received: ";msg
         if type(msg) = "roKeyboardScreenEvent" then
             if msg.isScreenClosed() then
@@ -61,6 +61,6 @@ function GetText(title as string, displayText as string, defaultText = "") as dy
                 end if
             end if
         end if
-    end while 
+    end while
     return invalid
 end function

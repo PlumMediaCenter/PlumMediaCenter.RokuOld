@@ -1,3 +1,3 @@
-Function APP_VERSION_NUMBER() As String
+function APP_VERSION_NUMBER() as string
     return "0.3.3"
-End Function
+end function

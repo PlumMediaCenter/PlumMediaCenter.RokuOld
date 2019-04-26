@@ -1,207 +1,207 @@
 '
 ' Retrieves the list of category names that will be displayed in the grid
 '
-Function API_GetCategoryNames() as Object
+function API_GetCategoryNames() as object
     url = g_baseUrl() + "api/GetCategoryNames.php"
     'perform a blocking request to retrieve the library object
 
 
     names = GetJSON(url)
-    
+
     'if the library was not able to be retrieved, make an empty library object
-    If (names = invalid) Then
+    if (names = invalid) then
         print "Failed to successfully fetch category names from the server"
         names = []
-    Else
+    else
         print "Retrieved library from server. "
-    End if
-    
+    end if
+
     return names
-End Function
+end function
 
 '
 ' Retrieves the list of categories
 '
-Function API_GetCategories(categoryNames) as Object
+function API_GetCategories(categoryNames) as object
     querystring = b_join(categoryNames, ",")
     url = g_baseUrl() + "api/GetCategories.php?names=" + b_urlEncode(querystring)
     b_print("Retrieving categories")
     categories = GetJSON(url)
     categoryLookup = {}
-    If (categories = invalid) Then
+    if (categories = invalid) then
         print "Failed to successfully fetch categories from the server"
         categories = []
         'put the categories into an associative array
-    Else
+    else
         for each category in categories
             categoryLookup[category.name] = category
         end for
         print "Retrieved categories from server."
-    End if
-    
+    end if
+
     return categoryLookup
-End Function
+end function
 
 '
-' Retrieves the library json file from the server. If that was unsuccessful, 
+' Retrieves the library json file from the server. If that was unsuccessful,
 ' this function returns an empty library object
-' @return Object  - the library object if successful, an empty library object if unsuccessful 
+' @return Object  - the library object if successful, an empty library object if unsuccessful
 '
-Function API_GetLibrary() as Object
+function API_GetLibrary() as object
     libraryUrl = g_baseUrl() + "api/GetLibrary.php"
     'perform a blocking request to retrieve the library object
 
 
     lib = GetJSON(libraryUrl)
-    
+
     'if the library was not able to be retrieved, make an empty library object
-    If (lib = invalid) Then
+    if (lib = invalid) then
         print "Failed to successfully fetch library from server. Using empty library object"
         lib =[]
-    Else
+    else
         print "Retrieved library from server. "
-    End if
-    
+    end if
+
     return lib
-End Function
+end function
 
 '
 ' Gets the next episode videoId for the specified tv show
 '
-Function API_GetNextEpisode(tvShowVideoId as integer) as Object
+function API_GetNextEpisode(tvShowVideoId as integer) as object
     url = g_baseUrl() + "api/GetNextEpisode.php?videoId=" + tvShowVideoId.ToStr()
     print "API-GetNextEpisode: ";url
     result = GetJson(url)
-    If result = invalid Then
+    if result = invalid then
         print "API-GetNextEpisode: invalid"
-    Else
+    else
         print "API-GetNextEpisode: success"
-    End If
+    end if
     return result
-End Function
+end function
 
 '
 ' Wraps the API_GetNextEpisode call and only returns the episode videoId
 '
-Function API_GetNextEpisodeId(tvShowVideoId as Integer) as Integer
+function API_GetNextEpisodeId(tvShowVideoId as integer) as integer
     episode = API_GetNextEpisode(tvShowVideoId)
     episodeId = -1
-    If episode = invalid Then
+    if episode = invalid then
         episodeId = -1
-    Else
+    else
         episodeId = episode.videoId
-    End If
+    end if
     print "API-GetNextEpisodeId: EpisodeId->";episodeId
     return episodeId
-End Function
+end function
 
 '
 ' Returns an object containing the tv show with the videoId requested, as well as all of the episodes in that show
 '
-Function API_GetTvShow(tvShowVideoId as Integer) as Object
+function API_GetTvShow(tvShowVideoId as integer) as object
     url = g_baseUrl() + "api/GetTvShow.php?videoId=" + tvShowVideoId.ToStr()
     print "API-GetTvShow: ";url
     result = GetJson(url)
-    If result <> invalid Then
+    if result <> invalid then
         print "API-GetTvShow: showId=";tvShowVideoId;", success"
-    Else
+    else
         print "API-GetTvShow: showId=";tvShowVideoId;", result=invalid"
-    End If
+    end if
     return result
-End Function
+end function
 
 '
 ' Returns an object containing the tv show with the videoId requested, as well as all of the episodes in that show
 '
-Function API_GetTvEpisodes(tvShowVideoId as Integer) as Object
+function API_GetTvEpisodes(tvShowVideoId as integer) as object
     url = b_concat(g_baseUrl(), "api/GetTvEpisodes.php?videoId=", tvShowVideoId)
     print "API-GetTvEpisodes: ";url
     result = GetJson(url)
-    If result <> invalid Then
+    if result <> invalid then
         print "API-GetTvEpisodes: showId=";tvShowVideoId;", success"
-    Else
+    else
         print "API-GetTvEpisodes: showId=";tvShowVideoId;", result=invalid"
-    End If
+    end if
     return result
-End Function
+end function
 
 '
-'Get the current second number to start a video at 
+'Get the current second number to start a video at
 '
-Function API_GetVideo(videoId as Integer) as object
+function API_GetVideo(videoId as integer) as object
     b_print("API_GetVideo", 1)
-    
+
     url = b_concat(g_baseUrl(), "api/GetVideo.php?videoId=", videoId)
-    
+
     b_printc("url: ", url)
-    
+
     video = GetJSON(url)
     b_printc("Success. videoId: ", b_toString(video.videoId))
-    
+
     b_print(invalid, -1)
-    return video 
-End Function
+    return video
+end function
 
 
 '
-'Get the current second number to start a video at 
+'Get the current second number to start a video at
 '
-Function API_GetVideoProgress(videoId as Integer) as Integer
+function API_GetVideoProgress(videoId as integer) as integer
     url = g_baseUrl() + "api/GetVideoProgress.php?videoId=" + videoId.ToStr()
     print "API-GetVideoProgress: ";url
     progress = GetJSON(url)
     startSeconds = progress.startSeconds
     print "API-GetVideoProgress: videoId=";videoId;". result (startSeconds)=";startSeconds
-    return startSeconds 
-End Function
+    return startSeconds
+end function
 
 
 '
 'Set the current second number the video is playing at
 '
-Sub API_SetVideoProgress(videoId as Integer, seconds as Integer)
+sub API_SetVideoProgress(videoId as integer, seconds as integer)
     strSeconds = seconds.ToStr()
     strVideoId = videoId.ToStr()
     url = g_baseUrl() + "api/SetVideoProgress.php?videoId=" + strVideoId + "&seconds=" + strSeconds
     result = GetJSON(url)
     success = result.success
     print "API-SetVideoProgress: videoId=";strVideoId;", seconds=";strSeconds;", success=";success
-End Sub
+end sub
 
 '
 'Set the current second number the video is playing at
 '
-Sub API_SetVideoCompleted(videoId as Integer)
+sub API_SetVideoCompleted(videoId as integer)
     strVideoId = videoId.ToStr()
     url = g_baseUrl() + "api/SetVideoProgress.php?videoId=" + strVideoId + "&finished=true"
     result = GetJSON(url)
     success = result.success
     print "API-SetVideoProgress completed: videoId=";strVideoId;", success=";success
-End Sub
+end sub
 
 '
-' Determines if the server is currently visible or not. 
+' Determines if the server is currently visible or not.
 '
-Function API_ServerExists() as Boolean
+function API_ServerExists() as boolean
     mBaseUrl = g_baseUrl()
-    If mBaseUrl = invalid Then
-        Return false
-    End If
-    
+    if mBaseUrl = invalid then
+        return false
+    end if
+
     url = mBaseUrl + "api/ServerExists.php"
     result = GetJSONBoolean(url)
     success = result
     print "API-ServerExists: url=";url;" Success=";success
     return success
-End Function
+end function
 
-Function API_GetServerVersionNumber() as String
+function API_GetServerVersionNumber() as string
     mBaseUrl = g_baseUrl()
-    If mBaseUrl = invalid Then
+    if mBaseUrl = invalid then
         print "base url is invalid"
-        Return "0.1.0"
-    End If
-    
+        return "0.1.0"
+    end if
+
     url = mBaseUrl + "api/GetServerVersionNumber.php"
     result = GetJSON(url)
     print b_concat("server says that version is: ", result)
@@ -212,22 +212,22 @@ Function API_GetServerVersionNumber() as String
         print "result is the old value"
         result = "0.1.0"
     end if
-    
+
     print "API-GetServerVersionNumber: url=";url;" Success=";result
     return result
-End Function
+end function
 
-function API_GetSearchSuggestions(searchString) as Object
+function API_GetSearchSuggestions(searchString) as object
     url = concat(g_baseUrl(), "api/GetSearchSuggestions.php?q=",searchString)
     result = GetJSON(url)
-    if result = invalid 
+    if result = invalid
         result = []
     end if
     print concat("API-GetSearchSuggestions: url: ", url)
     return result
 end function
 
-function API_GetSearchResults(searchString) as Object
+function API_GetSearchResults(searchString) as object
     url = concat(g_baseUrl(), "api/GetSearchResults.php?q=", b_escapeUrl(searchString))
     print concat("API-GetSearchResults: url: ", url)
     searchResults = GetJSON(url)
@@ -235,7 +235,7 @@ function API_GetSearchResults(searchString) as Object
     return searchResults
 end function
 
-function API_UpdateServer() as Boolean
+function API_UpdateServer() as boolean
     url = concat(g_baseUrl(), "api/Update.php")
     print concat("API-UpdateServer: url: ", url)
     result = GetJSON(url)

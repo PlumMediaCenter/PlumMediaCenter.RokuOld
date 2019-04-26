@@ -1,27 +1,27 @@
 function VideoInfoScreen(videoId as integer)
     b_print("VideoInfoScreen", 1)
-    
+
     b_print(b_concat("videoId: ", videoId))
-    
+
     messageScreen =  GetNewMessageScreen("", "Loading")
     if m.videoInfoScreen = invalid then
         m.videoInfoScreen = CreateObject("roSpringboardScreen")
         SetAuthHeader(m.videoInfoScreen)
-    end if     
+    end if
     video = API_GetVideo(videoId)
-    
+
     b_print(video)
-    
+
     port = CreateObject("roMessagePort")
     screen = m.videoInfoScreen
-    screen.SetMessagePort(port) 
+    screen.SetMessagePort(port)
     screen.setProgressIndicatorEnabled(true)
     screen.SetStaticRatingEnabled(false)
-    
+
     screen.AddButton(0, "Play")
-    
+
     screen.SetDisplayMode("photo-fit")
-    
+
     screen.SetBreadcrumbText("[location 1]", "[location2]")
     screen.SetMessagePort(port)
     o = CreateObject("roAssociativeArray")
@@ -47,7 +47,7 @@ function VideoInfoScreen(videoId as integer)
     '    o.Director = "[Director]"
     screen.SetContent(o)
     screen.Show()
-    
+
     screen.setProgressIndicator(250, 1000)
     while true
         msg = wait(0, port)
@@ -61,7 +61,7 @@ function VideoInfoScreen(videoId as integer)
             print "msg: "; msg.GetMessage(); "idx: "; msg.GetIndex()
         end if
     end while
-    
+
     b_print(invalid, -1)
     m.videoInfoScreen = invalid
     return -1

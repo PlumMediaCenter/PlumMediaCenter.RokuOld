@@ -2,7 +2,7 @@ function showSearchScreen()
     port = CreateObject("roMessagePort")
     screen = CreateObject("roSearchScreen")
     screen.SetBreadcrumbText("", "search")
-    screen.SetMessagePort(port) 
+    screen.SetMessagePort(port)
     screen.SetSearchTermHeaderText("Suggestions:")
     screen.SetEmptySearchTermsText("Enter a title of a movie or TV show")
     screen.SetSearchButtonText("Search")
@@ -11,14 +11,14 @@ function showSearchScreen()
     done = false
     searchTerm = ""
     while done = false
-        msg = wait(0, screen.GetMessagePort()) 
+        msg = wait(0, screen.GetMessagePort())
         if type(msg) = "roSearchScreenEvent"
             if msg.isScreenClosed()
                 print "screen closed"
                 done = true
             else if msg.isCleared()
                 print "search terms cleared"
-                 screen.ClearSearchTerms()
+                screen.ClearSearchTerms()
             else if msg.isFullResult()
                 searchTerm = msg.GetMessage()
                 loadSearchResults(searchTerm)
@@ -28,14 +28,14 @@ function showSearchScreen()
                 screen.SetSearchTerms(getSearchSuggestions(searchTerm))
             end if
         end if
-    end while 
+    end while
     print "Exiting..."
 end function
 
-function getSearchSuggestions(searchTerm) as Object
-    results = CreateObject("roArray", 1, true) 
+function getSearchSuggestions(searchTerm) as object
+    results = CreateObject("roArray", 1, true)
     suggestions = API_GetSearchSuggestions(searchTerm)
-    For Each suggestion in suggestions
+    for each suggestion in suggestions
         results.push(suggestion.title)
     end for
     return results
@@ -52,6 +52,5 @@ function loadSearchResults(searchTerm) as object
     messageScreen.hide()
 end function
 
-    
-        
-   
+
+
