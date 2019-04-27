@@ -1,7 +1,7 @@
 title=PlumMediaCenter
 major_version=1
 minor_version=1
-build_version=20180310000106
+build_version=20180310000107
 mm_icon_focus_hd=pkg:/images/focus.png
 mm_icon_focus_sd=pkg:/images/focus.png
 splash_screen_fhd=pkg:/images/splash_fhd.png

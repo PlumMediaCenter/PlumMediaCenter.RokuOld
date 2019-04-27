@@ -1,3 +1,4 @@
 out/PlumMediaCenterRokuApp.zip
 *.pkg
 out/
+node_modules

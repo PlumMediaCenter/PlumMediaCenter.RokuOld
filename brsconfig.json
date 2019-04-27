@@ -1,3 +1,8 @@
 {
-    "strictTypeChecking": true
+    "strictTypeChecking": true,
+    "files": [
+        "manifest",
+        "source/**/*.*",
+        "images/**/*.*"
+    ]
 }

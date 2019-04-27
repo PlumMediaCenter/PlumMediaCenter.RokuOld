@@ -1,0 +1,22 @@
+{
+  "name": "plummediacenter.rokuold",
+  "version": "1.0.0",
+  "description": "PlumMediaCenterRokuApp\r ======================",
+  "main": "create-signed-package.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TwitchBronBron/PlumMediaCenterRokuApp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TwitchBronBron/PlumMediaCenterRokuApp/issues"
+  },
+  "homepage": "https://github.com/TwitchBronBron/PlumMediaCenterRokuApp#readme",
+  "dependencies": {
+    "roku-deploy": "^2.1.0-beta1"
+  }
+}
