@@ -441,26 +441,28 @@ function b_toString(item) as string
     result = ""
     itemType = type(item)
 
-    if item = invalid
+    if item = invalid then
         result = "invalid"
-    else if itemType = "String"
+    else if itemType = "String" then
         result = item
-    else if itemType = "roString"
+    else if itemType = "roString" then
         result = item.GetString()
-    else if itemType = "roAssociativeArray"
+    else if itemType = "roAssociativeArray" then
         result = b_jsonStringify(item)
-    else if itemType = "Boolean"
+    else if itemType = "Boolean" then
         result = iff(item, "true", "false")
-    else if itemType = "Integer" or itemType = "Float" or itemType = "Double"
+    else if itemType = "roBoolean" then
+        result = item.ToStr()
+    else if itemType = "Integer" or itemType = "Float" or itemType = "Double" then
         'remove the leading space brightscript puts in for numeric types
         result = Str(item).trim()
-    else if itemType = "Object"
+    else if itemType = "Object" then
         result = "[object]"
-    else if itemType = "function"
+    else if itemType = "function" then
         result = "[function]"
-    else if itemType = "Interface"
+    else if itemType = "Interface" then
         result = "[interface]"
-    else if itemType = "roArray"
+    else if itemType = "roArray" then
         result = "["
         sep = ""
         for each arrItem in item

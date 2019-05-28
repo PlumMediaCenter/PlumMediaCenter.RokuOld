@@ -29,7 +29,11 @@ end function
 '
 function GetJSON(sUrl as string) as object
     resultText = Get(sUrl)
-    obj = ParseJson(resultText)
+    if resultText <> "" then
+        obj = ParseJson(resultText)
+    else 
+        obj = invalid
+    end if
     return obj
 end function
 

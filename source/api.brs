@@ -125,9 +125,6 @@ function API_GetTvEpisodes(tvShowVideoId as integer) as object
     return result
 end function
 
-'
-'Get the current second number to start a video at
-'
 function API_GetVideo(videoId as integer) as object
     b_print("API_GetVideo", 1)
 
@@ -142,6 +139,34 @@ function API_GetVideo(videoId as integer) as object
     return video
 end function
 
+'
+'Get the current second number to start a video at
+'
+function API_GetIsInList(listName as string, videoId as integer) as boolean
+    b_print("API_GetIsInList", 1)
+
+    url = b_concat(g_baseUrl(), "api/IsInList.php?listName=", listName, "&videoId=", videoId)
+    b_printc("url: ", url)
+
+    return GetJSON(url)
+end function
+
+function API_ToggleListInclusion(listName as string, videoId as integer)
+    b_print("API_ToggleListInclusion", 1)
+    isInList = API_GetIsInList(listName, videoId)
+    b_print(b_concat("is in list", isInList))
+
+    if isInList = true then
+        'remove from list
+        url = b_concat(g_baseUrl(), "api/RemoveFromList.php?listName=", listName , "&videoIds=", videoId)
+    else
+        'add to list
+        url = b_concat(g_baseUrl(), "api/AddToList.php?listName=", listName, "&videoIds=", videoId)
+    end if
+    b_print(url)
+    result = GetJSON(url)
+    b_print(b_concat("result", result), -1)
+end function
 
 '
 'Get the current second number to start a video at

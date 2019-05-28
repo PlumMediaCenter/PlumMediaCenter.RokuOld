@@ -10,6 +10,7 @@ function VideoInfoScreen(videoId as integer)
     end if
     video = API_GetVideo(videoId)
 
+
     b_print(video)
 
     port = CreateObject("roMessagePort")
@@ -18,11 +19,11 @@ function VideoInfoScreen(videoId as integer)
     screen.setProgressIndicatorEnabled(true)
     screen.SetStaticRatingEnabled(false)
 
-    screen.AddButton(0, "Play")
+    SetButtons(videoId)
 
     screen.SetDisplayMode("photo-fit")
 
-    screen.SetBreadcrumbText("[location 1]", "[location2]")
+    'screen.SetBreadcrumbText("[location 1]", "[location2]")
     screen.SetMessagePort(port)
     o = CreateObject("roAssociativeArray")
     o.ContentType = "movie"
@@ -57,6 +58,10 @@ function VideoInfoScreen(videoId as integer)
             idx = msg.GetIndex()
             if idx = 0 then
                 PlayVideo(video)
+            else if idx = 1 then
+                ToggleMyList(videoId)
+            else if idx = 2 then
+                exit while
             end if
             print "msg: "; msg.GetMessage(); "idx: "; msg.GetIndex()
         end if
@@ -65,4 +70,17 @@ function VideoInfoScreen(videoId as integer)
     b_print(invalid, -1)
     m.videoInfoScreen = invalid
     return -1
+end function
+
+function ToggleMyList(videoId as integer)
+    API_ToggleListInclusion("My+List", videoId)
+    SetButtons(videoId)
+end function
+
+function SetButtons(videoId as integer)
+    isInMyList = API_GetIsInList("My+List", videoId)
+    m.videoInfoScreen.ClearButtons()
+    m.videoInfoScreen.AddButton(0, "Play")
+    m.videoInfoScreen.AddButton(1, b_iff(isInMyList, "Remove from my list", "Add to my list"))
+    m.videoInfoScreen.AddButton(2, "Back")
 end function
