@@ -39,6 +39,7 @@ end function
 
 function GetText(title as string, displayText as string, defaultText = "") as dynamic
     screen = CreateObject("roKeyboardScreen")
+    defaultText = b_iff(defaultText <> invalid, defaultText, "")
     'set the default value of the keyboard screen
     screen.SetText(defaultText)
     port = CreateObject("roMessagePort")
