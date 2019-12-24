@@ -3,7 +3,7 @@ function ServerUrlUpdateScreen() as dynamic
     g_password(GetText("Password", "Enter your password", g_password()))
     serverUrl = g_baseUrl()
     if serverUrl = invalid then
-        serverUrl = "http://bronley.no-ip.biz:8081/PlumMediaCenter/"
+        serverUrl = "http://bronley.no-ip.biz:8080/PlumMediaCenter/"
     end if
     serverUrl = GetText("PlumMediaCenter Server URL", "Enter the url for the server running PlumMediaCenter.", serverUrl)
     'if the base url is missing the ending slash, add it
