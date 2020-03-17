@@ -227,6 +227,9 @@ sub PlayVideo(pVideo as object)
     video.IsHD = true
     video.HDBranded = false
 
+    'set the subtitle url. (hopefully it's ok if this file doesn't exist...)
+    video.SubtitleUrl = pVideo.url.Replace(".mp4", ".srt")
+
     ' Note: The preferred way to specify stream info in v2.6 is to use
     ' the Stream roAssociativeArray content meta data parameter.
     print "Play Video...Url: ";pVideo.url
