@@ -81,6 +81,21 @@ function API_GetNextEpisode(tvShowVideoId as integer) as object
 end function
 
 '
+' Gets the next episode videoId for the specified tv show
+'
+function API_GetEpisode(episodeVideoId as integer) as object
+    url = g_baseUrl() + "api/GetEpisode.php?videoId=" + episodeVideoId.ToStr()
+    print "API-GetEpisode: ";url
+    result = GetJson(url)
+    if result = invalid then
+        print "API-GetEpisode: invalid"
+    else
+        print "API-GetEpisode: success"
+    end if
+    return result
+end function
+
+'
 ' Wraps the API_GetNextEpisode call and only returns the episode videoId
 '
 function API_GetNextEpisodeId(tvShowVideoId as integer) as integer

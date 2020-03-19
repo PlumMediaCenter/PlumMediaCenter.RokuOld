@@ -73,13 +73,13 @@ function compareVersionWithServer()
     serverMinor = Val(serverVersionParts[1])
 
     print concat("Comparing app version and server version: ", appVersion, " --- ", serverVersion)
-    print concat(appMajor, " < ",serverMajor, " or ",appMinor ," < ",serverMinor)
-    print concat( serverMajor, " < ",appMajor, " or ", serverMinor ," < ", appMinor)
+    print concat(appMajor, " < ", serverMajor, " or ", appMinor , " < ", serverMinor)
+    print concat(serverMajor, " < ", appMajor, " or ", serverMinor , " < ", appMinor)
     'if app is behind the server
     if appMajor < serverMajor or appMinor < serverMinor then
         print "app is behind server"
         'app is behind the server
-        choice = b_choose("The server has a higher version than this app can handle. Please go to Settings > System Update from the main roku menu to get the latest version of this app", 0, "Continue at my own risk","Change server url", "Exit")
+        choice = b_choose("The server has a higher version than this app can handle. Please go to Settings > System Update from the main roku menu to get the latest version of this app", 0, "Continue at my own risk", "Change server url", "Exit")
         if choice = 0 then
             return true
         else if choice = 1
@@ -90,20 +90,20 @@ function compareVersionWithServer()
             return false
         end if
         'if the server is behind the app
-    else if serverMajor < appMajor or serverMinor <appMinor
+    else if serverMajor < appMajor or serverMinor < appMinor
         print "server is behind app"
         'server is behind the app
         choice = b_choose(b_concat("The server has a lower version than this app can handle. Server: ", serverVersion, "  Roku App: ", appVersion), 0, "Ignore (Don't update the server)", "Update the server now", "Change the server url", "Exit this app and don't update")
 
         if choice = 0 then
             exitValue = true
-        else if  choice = 1
+        else if choice = 1
             updatingScreen = GetNewMessageScreen("", "Updating server")
             'get the current server version
             updateSuccess = API_UpdateServer()
             updatingScreen.close()
             'the server threw an error
-            if updateSuccess = false  then
+            if updateSuccess = false then
                 b_alert("There was an error updating the server")
                 exitValue = false
             else
@@ -139,7 +139,7 @@ end function
 sub CheckConfiguration()
     print "Checking configuration settings"
 
-    if  g_baseUrl() = invalid or g_username() = invalid or g_password = invalid then
+    if g_baseUrl() = invalid or g_username() = invalid or g_password = invalid then
         print "PlumMediaCenter api url is not set. Prompting user to enter url."
         ShowMessage("Setup", "This app must be configured before it can be used. Please follow the instructions")
         print "User clicked ok on the initial setup screen"
@@ -175,7 +175,7 @@ sub LoadLibrary()
 end sub
 
 
-sub PlayVideo(pVideo as object)
+sub PlayVideo(pVideo as object, startSeconds = invalid)
 
     'if this video is a tv show, then find the next episode to watch
     if pVideo.mediaType = "TvShow" then
@@ -189,33 +189,42 @@ sub PlayVideo(pVideo as object)
 
     messageScreen = GetNewMessageScreen("", "Preparing video for playback...")
 
-    startSeconds = API_GetVideoProgress(pVideo.videoId)
-    print "Start Seconds: ";startSeconds
-    resume = true
-    if startSeconds > 0 then
-        hmsString = GetHourMinuteSecondString(startSeconds)
-        'for debugging purposes, skip the confirm window for now
-        result = ConfirmWithCancel("Resume where you left off?(" + hmsString + ")", "Resume", "Restart")
-        print "Confirm Result: ";result
-        if result = 1 then
-            print "PlayVideo: resuming playback at ";startSeconds;" seconds"
-            resume = true
-        else if result = 0 then
-            print "PlayVideo: restarting video from beginning"
-            resume = false
-        else
-            print "PlayVideo: cancel video playback"
-            return
+    resume = invalid
+
+    'if start seconds was provided
+    if startSeconds <> invalid then
+        print "Using startSeconds from parameter: "; startSeconds
+        resume = true
+    else
+        startSeconds = API_GetVideoProgress(pVideo.videoId)
+        print "Start Seconds: ";startSeconds
+        resume = true
+        if startSeconds > 0 then
+            hmsString = GetHourMinuteSecondString(startSeconds)
+            'for debugging purposes, skip the confirm window for now
+            result = ConfirmWithCancel("Resume where you left off?(" + hmsString + ")", "Resume", "Restart")
+            print "Confirm Result: ";result
+            if result = 1 then
+                print "PlayVideo: resuming playback at ";startSeconds;" seconds"
+                resume = true
+            else if result = 0 then
+                print "PlayVideo: restarting video from beginning"
+                resume = false
+            else
+                print "PlayVideo: cancel video playback"
+                return
+            end if
         end if
     end if
+
     if resume then
         startMilliseconds = startSeconds * 1000
-        'print "PlayVideo: resuming playback at ";startSeconds;" seconds"
+        print "PlayVideo: resuming playback at ";startSeconds;" seconds"
     else
-        'print "Restart playback"
+        print "Restart playback"
         startMilliseconds = -1
     end if
-    video  = CreateObject("roAssociativeArray")
+    video = CreateObject("roAssociativeArray")
     port = CreateObject("roMessagePort")
     screen = CreateObject("roVideoScreen")
     SetAuthHeader(screen)
@@ -235,8 +244,8 @@ sub PlayVideo(pVideo as object)
     print "Play Video...Url: ";pVideo.url
     video.Stream = {
         url: pVideo.url
-        bitrate:0
-        StreamFormat:  "mp4"
+        bitrate: 0
+        StreamFormat: "mp4"
     }
 
     ' now just tell the screen about the title to be played, set the

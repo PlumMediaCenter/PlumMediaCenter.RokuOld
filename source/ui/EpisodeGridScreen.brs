@@ -1,17 +1,14 @@
 function EpisodeGridScreen(tvShowVideoId as integer)
     print "Show tv episodes"
-    messageScreen =  GetNewMessageScreen("", "Retrieving tv episodes...")
+    messageScreen = GetNewMessageScreen("", "Retrieving tv episodes...")
     port = CreateObject("roMessagePort")
-    if m.episodeScreen = invalid then
-        m.episodeScreen = CreateObject("roPosterScreen")
-        SetAuthHeader(m.episodeScreen)
-    end if
+    eScreen = CreateObject("roPosterScreen")
+    SetAuthHeader(eScreen)
     show = API_GetTvShow(tvShowVideoId)
     episodes = API_GetTvEpisodes(tvShowVideoId)
     'get the video id of the video that should be focused in the episode grid as the one to watch
     nextEpisodeVideoId = API_GetNextEpisodeId(show.videoId)
 
-    eScreen = m.episodeScreen
     eScreen.SetMessagePort(port)
     episodeList = []
 
@@ -38,7 +35,7 @@ function EpisodeGridScreen(tvShowVideoId as integer)
         o.Title = b_toString(episode.episodeNumber) + ". " + b_toString(episode.title)
         o.SDPosterUrl = episode.sdPosterUrl
         o.HDPosterUrl = episode.hdPosterUrl
-        o.ShortDescriptionLine1 = concat("S", episode.seasonNumber,":E", b_toString(episode.episodeNumber).trim()," - ", episode.title)
+        o.ShortDescriptionLine1 = concat("S", episode.seasonNumber, ":E", b_toString(episode.episodeNumber).trim(), " - ", episode.title)
 
         o.Description = episode.plot
         o.Rating = episode.mpaa
@@ -47,7 +44,7 @@ function EpisodeGridScreen(tvShowVideoId as integer)
         'o.EpisodeNumber = episode.seasonNumber.ToStr()  + ":" +  episode.episodeNumber.ToStr()
         if runtime <> invalid then
             'o.Length = runtimeStr
-            o.ShortDescriptionLine2 =  runtime
+            o.ShortDescriptionLine2 = runtime
         end if
         o.Actors = []
         o.url = episode.url
@@ -78,8 +75,8 @@ function EpisodeGridScreen(tvShowVideoId as integer)
     while true
         msg = wait(0, port)
         if msg.isScreenClosed() then
-            m.episodeScreen = invalid
-            return -1
+            eScreen = invalid
+            return invalid
         else if msg.isListItemFocused() then
             print "Focused msg: ";msg.GetMessage()
             print "row: ";msg.GetData();
@@ -88,9 +85,7 @@ function EpisodeGridScreen(tvShowVideoId as integer)
         else if msg.isListItemSelected() then
             print "Selected Episode Index: ";msg.GetIndex()
             episode = episodeList[episodeIndex]
-            PlayVideo(episode)
-            'whenever the video has finished playing, reload this grid
-            return EpisodeGridScreen(tvShowVideoId)
+            return episode
         else if msg.isRemoteKeyPressed() and msg.GetIndex() = C_BUTTON_PLAY() then
             episode = episodeList[episodeIndex]
             PlayVideo(episode)

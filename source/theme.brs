@@ -4,12 +4,13 @@
 sub SetTheme()
     'these are the standard values used throughout the theme. Some of the different pages need to have the values re-set to override
     'the defaults, so rather than changing the values twise, set the once here and reference them by value
-    overhangSliceHD =  "pkg:/images/overhang_hd.png"
-    overhangSliceSD =  "pkg:/images/overhang_sd.png"
+    overhangSliceHD = "pkg:/images/overhang_hd.png"
+    overhangSliceSD = "pkg:/images/overhang_sd.png"
     greyBackgroundColor = "#363636"
     GridScreenOverhangHeightHD = "69"
     GridScreenOverhangHeightSD = "49"
 
+    white = "#FFFFFF"
     'dark color pattern
     charcoal = "#293647"
     lime = "#c2cc4f"
@@ -32,7 +33,7 @@ sub SetTheme()
     theme = CreateObject("roAssociativeArray")
     theme.BackgroundColor = greyBackgroundColor
     'the unselected text color in the search screen
-    theme.ButtonMenuNormalText  = "#CCCCCC"
+    theme.ButtonMenuNormalText = "#CCCCCC"
     'can only use a greyscale for the gridscreen background color
     theme.GridScreenBackgroundColor = greyBackgroundColor
     theme.OverhangSliceHD = overhangSliceHD
@@ -41,5 +42,9 @@ sub SetTheme()
     theme.GridScreenOverhangSliceSD = overhangSliceSD
     theme.GridScreenOverhangHeightHD = GridScreenOverhangHeightHD
     theme.GridScreenOverhangHeightSD = GridScreenOverhangHeightSD
+
+    theme.SpringboardTitleText = white
+    theme.SpringboardSynopsisColor = "#BBBBBB"
+    theme.SpringboardActorColor = white
     app.SetTheme(theme)
 end sub

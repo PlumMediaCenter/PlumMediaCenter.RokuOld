@@ -69,7 +69,7 @@ function MainGrid()
     settingsList = []
     settingsList.push(GridTile({
         Title: "Settings",
-        Description:"Change settings",
+        Description: "Change settings",
         SDPosterUrl: "pkg:/images/settings.sd.png",
         HDPosterUrl: "pkg:/images/settings.hd.png",
         onSelect: function()
@@ -78,7 +78,7 @@ function MainGrid()
     }))
     settingsList.push(GridTile({
         Title: "Refresh Videos",
-        Description:"Refresh the page with the latest videos from the server",
+        Description: "Refresh the page with the latest videos from the server",
         SDPosterUrl: "pkg:/images/refresh.sd.png",
         HDPosterUrl: "pkg:/images/refresh.hd.png",
         onSelect: function()
@@ -87,7 +87,7 @@ function MainGrid()
     }))
     settingsList.push(GridTile({
         Title: "Check for server updates",
-        Description:concat("App Version: ", APP_VERSION_NUMBER(), chr(10),"Server Version: ", API_GetServerVersionNumber()),
+        Description: concat("App Version: ", APP_VERSION_NUMBER(), chr(10), "Server Version: ", API_GetServerVersionNumber()),
         SDPosterUrl: "pkg:/images/info.sd.png",
         HDPosterUrl: "pkg:/images/info.hd.png",
         onSelect: function()
@@ -122,8 +122,6 @@ function MainGrid()
     'hide the message screen now that the grid has been shown
     messageScreen.Close()
 
-    'by default, select the search icon since that's the one that is highlighted on page load
-    selectedTile = grid.getItem(0, 0)
     while true
         msg = wait(0, port)
         print "message received";msg
@@ -135,10 +133,10 @@ function MainGrid()
                 columnNumber = msg.GetData()
 
                 selectedTile = grid.getItem(rowNumber, columnNumber)
-                print concat("Main grid item focused. Row: ",rowNumber,", Col: ",columnNumber)
+                print concat("Main grid item focused. Row: ", rowNumber, ", Col: ", columnNumber)
             else if msg.isRemoteKeyPressed() then
                 keyCode = msg.GetIndex()
-                print concat("Remote key was pressed: ",keyCode)
+                print concat("Remote key was pressed: ", keyCode)
 
                 if selectedTile <> invalid then
                     'play button was pressed
