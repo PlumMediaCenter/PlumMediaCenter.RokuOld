@@ -49,7 +49,7 @@ function loadSearchResults(searchTerm) as object
     numberOfResults =  b_size(results)
     print concat("Search results for '",searchTerm,"': count: ",numberOfResults)
     MainGrid()
-    messageScreen.hide()
+    messageScreen.Close()
 end function
 
 
