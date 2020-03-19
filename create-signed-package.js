@@ -5,6 +5,7 @@ rokuDeploy.deployAndSignPackage({
         "source/**/*.*",
         "images/**/*.*"
     ],
+    outFile: 'PlumMediaCenter',
     host: '192.168.1.103',
     password: 'password',
     signingPassword: 'SECRET'

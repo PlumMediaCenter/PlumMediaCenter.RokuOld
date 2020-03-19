@@ -5,6 +5,8 @@
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true,
-        "**/node_modules": true
+        "**/node_modules": true,
+        "**/.roku-deploy-staging": true,
+        "**/logs": true
     }
 }
