@@ -106,13 +106,18 @@ function MainGrid()
 
     grid.addRow("Settings", settingsList)
 
-    roGridScreen.Show()
-
     grid.draw(roGridScreen)
+
     'if there is at least one search result, select that first item
     if b_size(m.searchResults) > 0 then
-        roGridScreen.SetFocusedListItem(0,1)
+        roGridScreen.SetFocusedListItem(1, 1)
+        selectedTile = grid.getItem(1, 1)
+    else
+        roGridScreen.SetFocusedListItem(0, 0)
+        selectedTile = grid.getItem(0, 0)
     end if
+
+    roGridScreen.Show()
 
     'hide the message screen now that the grid has been shown
     messageScreen.Close()
