@@ -14,7 +14,9 @@ function MainGrid()
 
     categoryNames = API_GetCategoryNames()
     b_printc("Server said it has these categories: ", categoryNames)
+    b_printc(CreateObject("roDateTime").ToISOString())
     categories = API_GetCategories(categoryNames)
+    b_printc(CreateObject("roDateTime").ToISOString())
 
     'load the library from the server. This will replace the global library object with a new one from the server
     'LoadLibrary()
@@ -55,11 +57,16 @@ function MainGrid()
     isFirstCategory = true
     for each categoryName in categoryNames
         category = categories[categoryName]
+        categoryTitle = iff(category.title <> invalid, category.title, category.name)
+
         'skip the first one since it is the 'recently watched' category
         if isFirstCategory then
             isFirstcategory = false
         else
-            grid.addRow(categoryName, GetMediaTypeVideoGridTiles(category.videos))
+            'only add this category if it has videos
+            if category.videos.Count() > 0 then
+                grid.addRow(categoryTitle, GetMediaTypeVideoGridTiles(category.videos))
+            end if
         end if
     end for
 

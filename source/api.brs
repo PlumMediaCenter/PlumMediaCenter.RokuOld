@@ -23,20 +23,31 @@ end function
 ' Retrieves the list of categories
 '
 function API_GetCategories(categoryNames) as object
-    querystring = b_join(categoryNames, ",")
-    url = g_baseUrl() + "api/GetCategories.php?names=" + b_urlEncode(querystring)
-    b_print("Retrieving categories")
-    categories = GetJSON(url)
+    properties = ["title", "plot", "mpaa", "year", "videoId", "posterModifiedDate", "sdPosterUrl", "hdPosterUrl"]
+    querystring = "?names=" + b_urlEncode(b_join(categoryNames, ",")) + "&properties=" + b_urlEncode(b_join(properties, ","))
+    url = g_baseUrl() + "api/GetCategories.php" + querystring
+    b_print("Retrieving categories: " + url)
+    response = GetJSON(url)
     categoryLookup = {}
-    if (categories = invalid) then
+    if response = invalid then
         print "Failed to successfully fetch categories from the server"
         categories = []
         'put the categories into an associative array
     else
-        for each category in categories
+        print "Retrieved categories from server."
+
+        print "unwrapping response"
+        'the response cones with a video map, and each category has an array of videoIds.
+        'so we want to add a `videos` property to every category
+        for each category in response.categories
+            category.videos = []
+            for each videoId in category.videoIds
+                video = response.videos[videoId.ToStr()]
+                category.videos.Push(video)
+            end for
+            category.Delete("videoIds")
             categoryLookup[category.name] = category
         end for
-        print "Retrieved categories from server."
     end if
 
     return categoryLookup
@@ -57,7 +68,7 @@ function API_GetLibrary() as object
     'if the library was not able to be retrieved, make an empty library object
     if (lib = invalid) then
         print "Failed to successfully fetch library from server. Using empty library object"
-        lib =[]
+        lib = []
     else
         print "Retrieved library from server. "
     end if
@@ -150,7 +161,7 @@ function API_GetVideo(videoId as integer) as object
     video = GetJSON(url)
     b_printc("Success. videoId: ", b_toString(video.videoId))
 
-    b_print(invalid, -1)
+    b_print(invalid, - 1)
     return video
 end function
 
@@ -180,7 +191,7 @@ function API_ToggleListInclusion(listName as string, videoId as integer)
     end if
     b_print(url)
     result = GetJSON(url)
-    b_print(b_concat("result", result), -1)
+    b_print(b_concat("result", result), - 1)
 end function
 
 '
@@ -267,7 +278,7 @@ function API_GetServerVersionNumber() as string
 end function
 
 function API_GetSearchSuggestions(searchString) as object
-    url = concat(g_baseUrl(), "api/GetSearchSuggestions.php?q=",searchString)
+    url = concat(g_baseUrl(), "api/GetSearchSuggestions.php?q=", searchString)
     result = GetJSON(url)
     if result = invalid
         result = []
@@ -290,7 +301,7 @@ function API_UpdateServer() as boolean
     result = GetJSON(url)
     print result
     if result = invalid
-        result = {success: false}
+        result = { success: false }
     end if
     print result.success
     return result.success
