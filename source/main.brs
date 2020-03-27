@@ -18,8 +18,6 @@ sub Main()
     messageScreen = GetNewMessageScreen("", "Connecting to server...")
     messageScreens.push(messageScreen)
 
-    g_baseUrl("http://charmeleon.lan/PlumMediaCenter/")
-
     serverExists = API_ServerExists()
     if serverExists = False then
         confirmResult = Confirm("Unable to find PlumMediaCenter Server at the following url. Would you like to update the url? '" + g_baseUrl() + "'", "Yes", "No")

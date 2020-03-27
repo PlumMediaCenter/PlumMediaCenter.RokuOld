@@ -6,9 +6,9 @@ rokuDeploy.deployAndSignPackage({
         "images/**/*.*"
     ],
     outFile: 'PlumMediaCenter',
-    host: '192.168.1.103',
+    host: '192.168.1.104',
     password: 'password',
-    signingPassword: 'SECRET'
+    signingPassword: '2XPxZpIzgplvjaT+FIk74g=='
     //other options if necessary
 }).then(function (pathToSignedPackage) {
     console.log('Signed package created at ', pathToSignedPackage);
