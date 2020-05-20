@@ -23,7 +23,7 @@ end function
 ' Retrieves the list of categories
 '
 function API_GetCategories(categoryNames) as object
-    properties = ["title", "plot", "mpaa", "year", "videoId", "posterModifiedDate", "sdPosterUrl", "hdPosterUrl"]
+    properties = ["title", "plot", "mpaa", "year", "videoId", "posterModifiedDate", "sdPosterUrl", "hdPosterUrl", "mediaType"]
     querystring = "?names=" + b_urlEncode(b_join(categoryNames, ",")) + "&properties=" + b_urlEncode(b_join(properties, ","))
     url = g_baseUrl() + "api/GetCategories.php" + querystring
     b_print("Retrieving categories: " + url)
