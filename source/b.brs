@@ -38,7 +38,7 @@ end function
 ' @param {int} selectedItemIndex - the index of the item that should be selected by default
 ' @param ... pass in a string for each option
 ' @return {int} - the zero based index of the item selected, where 0 is the first option
-function b_choose(message, selectedItemIndex, a=invalid,b=invalid,c=invalid,d=invalid,e=invalid,f=invalid,g=invalid,h=invalid) as integer
+function b_choose(message, selectedItemIndex, a = invalid, b = invalid, c = invalid, d = invalid, e = invalid, f = invalid, g = invalid, h = invalid) as integer
     print b_concat("Making user choose: '", message)
     port = CreateObject("roMessagePort")
     dialog = CreateObject("roMessageDialog")
@@ -46,7 +46,7 @@ function b_choose(message, selectedItemIndex, a=invalid,b=invalid,c=invalid,d=in
     dialog.EnableBackButton(true)
     'dialog.SetTitle(messageTitle)
     dialog.SetText(message)
-    options = [a,b,c,d,e,f,g,h]
+    options = [a, b, c, d, e, f, g, h]
     i = 0
     for each option in options
         if option = invalid
@@ -78,7 +78,7 @@ end function
 ' when using the + operator.
 ' @param {...dynamic} - pass in up to 12 parameters to be concatenated together
 '
-function b_concat(a=invalid,b=invalid,c=invalid,d=invalid,e=invalid,f=invalid,g=invalid,h=invalid,i=invalid,j=invalid,k=invalid,l=invalid)
+function b_concat(a = invalid, b = invalid, c = invalid, d = invalid, e = invalid, f = invalid, g = invalid, h = invalid, i = invalid, j = invalid, k = invalid, l = invalid)
     result = ""
     if a <> invalid
         result = result + b_toString(a)
@@ -121,7 +121,7 @@ end function
 ' @param string name - the name of the registry key
 ' @param {string} [section="Settings"] - the section the value is saved in. If not specified, the default is used
 '
-function b_deleteRegistryValue(name as string, section="Settings") as void
+function b_deleteRegistryValue(name as string, section = "Settings") as void
     sec = CreateObject("roRegistrySection", section)
     sec.Delete(name)
     sec.Flush()
@@ -143,7 +143,7 @@ end function
 ' @param string name - the name of the variable to be saved in the registry
 ' @param {string} [section="Settings"] - the section to save the value into. If not specified, the default is used
 '
-function b_getRegistryValue(name as string, section="Settings") as dynamic
+function b_getRegistryValue(name as string, section = "Settings") as dynamic
     sec = CreateObject("roRegistrySection", section)
     if sec.Exists(name)
         return sec.Read(name)
@@ -228,7 +228,7 @@ function b_join(arr, separator)
     result = ""
     sep = ""
     for each item in arr
-        result = result +  sep + b_toString(item)
+        result = result + sep + b_toString(item)
         sep = separator
     end for
     return result
@@ -239,17 +239,17 @@ function b_jsonStringify(obj as dynamic)
     return SimpleJSONBuilder(obj)
 end function
 
-function SimpleJSONBuilder( jsonArray as object ) as string
-    return SimpleJSONAssociativeArray( jsonArray )
+function SimpleJSONBuilder(jsonArray as object) as string
+    return SimpleJSONAssociativeArray(jsonArray)
 end function
 
 
-function SimpleJSONAssociativeArray( jsonArray as object ) as string
+function SimpleJSONAssociativeArray(jsonArray as object) as string
     jsonString = "{"
 
     for each key in jsonArray
         jsonString = jsonString + Chr(34) + key + Chr(34) + ":"
-        value = jsonArray[ key ]
+        value = jsonArray[key]
         if b_isInvalid(value) then
             jsonString = jsonString + "null"
         else if b_isString(value) then
@@ -257,16 +257,16 @@ function SimpleJSONAssociativeArray( jsonArray as object ) as string
         else if b_isInteger(value) or b_isFloat(value) then
             jsonString = jsonString + value.ToStr()
         else if b_isBoolean(value) then
-            jsonString = jsonString + IIf( value, "true", "false" )
+            jsonString = jsonString + IIf(value, "true", "false")
         else if b_isArray(value) then
-            jsonString = jsonString + SimpleJSONArray( value )
+            jsonString = jsonString + SimpleJSONArray(value)
         else if b_isAssociativeArray(value) then
-            jsonString = jsonString + SimpleJSONBuilder( value )
+            jsonString = jsonString + SimpleJSONBuilder(value)
         end if
         jsonString = jsonString + ","
     next
-    if Right( jsonString, 1 ) = "," then
-        jsonString = Left( jsonString, Len( jsonString ) - 1 )
+    if Right(jsonString, 1) = "," then
+        jsonString = Left(jsonString, Len(jsonString) - 1)
     end if
     b_name = "hello"
 
@@ -275,32 +275,32 @@ function SimpleJSONAssociativeArray( jsonArray as object ) as string
 end function
 
 
-function SimpleJSONArray( jsonArray as object ) as string
+function SimpleJSONArray(jsonArray as object) as string
     jsonString = "["
 
     for each value in jsonArray
-        if Type( value ) = "roString" then
+        if Type(value) = "roString" then
             jsonString = jsonString + Chr(34) + value + Chr(34)
-        else if Type( value ) = "roInt" or Type( value ) = "roFloat" then
+        else if Type(value) = "roInt" or Type(value) = "roFloat" then
             jsonString = jsonString + value.ToStr()
-        else if Type( value ) = "roBoolean" then
-            jsonString = jsonString + IIf( value, "true", "false" )
-        else if Type( value ) = "roArray" then
-            jsonString = jsonString + SimpleJSONArray( value )
-        else if Type( value ) = "roAssociativeArray" then
-            jsonString = jsonString + SimpleJSONAssociativeArray( value )
+        else if Type(value) = "roBoolean" then
+            jsonString = jsonString + IIf(value, "true", "false")
+        else if Type(value) = "roArray" then
+            jsonString = jsonString + SimpleJSONArray(value)
+        else if Type(value) = "roAssociativeArray" then
+            jsonString = jsonString + SimpleJSONAssociativeArray(value)
         end if
         jsonString = jsonString + ","
     next
-    if Right( jsonString, 1 ) = "," then
-        jsonString = Left( jsonString, Len( jsonString ) - 1 )
+    if Right(jsonString, 1) = "," then
+        jsonString = Left(jsonString, Len(jsonString) - 1)
     end if
 
     jsonString = jsonString + "]"
     return jsonString
 end function
 
-function IIf( Condition, Result1, Result2 )
+function IIf(Condition, Result1, Result2)
     if Condition then
         return Result1
     else
@@ -324,7 +324,7 @@ end function
 ' @param {string} message - the message to print
 ' @param {integer} changeInDepth - changes the nested level of any messages AFTER this one
 '
-function b_print(message, changeInDepth=invalid)
+function b_print(message, changeInDepth = invalid)
     m.b_indentationLevel = b_iff(m.b_indentationLevel = invalid, 0, m.b_indentationLevel)
     spaces = ""
     for i = 0 to m.b_indentationLevel step 1
@@ -340,8 +340,8 @@ end function
 '
 ' Combination of print and concat, without the b_print's changeInLevel option
 '
-function b_printc(a=invalid,b=invalid,c=invalid,d=invalid,e=invalid,f=invalid,g=invalid,h=invalid,i=invalid,j=invalid,k=invalid,l=invalid)
-    return b_print(b_concat(a,b,c,d,e,f,g,h,i,j,k,l))
+function b_printc(a = invalid, b = invalid, c = invalid, d = invalid, e = invalid, f = invalid, g = invalid, h = invalid, i = invalid, j = invalid, k = invalid, l = invalid)
+    return b_print(b_concat(a, b, c, d, e, f, g, h, i, j, k, l))
 end function
 
 '
@@ -350,7 +350,7 @@ end function
 ' @param string value - the value to save into the registry
 ' @param {string} [section="Settings"] - the section to save the value into. If not specified, the default is used
 '
-function b_setRegistryValue(name as string, value as string, section="Settings") as void
+function b_setRegistryValue(name as string, value as string, section = "Settings") as void
     sec = CreateObject("roRegistrySection", section)
     sec.Write(name, value)
     sec.Flush()
@@ -359,7 +359,7 @@ end function
 '''
 ' count the number of items in an array or associative array
 '''
-function b_size(collection=invalid)
+function b_size(collection = invalid)
     count = 0
     if collection = invalid
         count = 0
@@ -403,7 +403,7 @@ function b_timedInterval(obj as dynamic)
     end if
     obj.durationMilliseconds = b_iff(b_isInvalid(obj.durationMilliseconds), 10000, obj.durationMilliseconds)
     obj.intervalMilliseconds = b_iff(b_isInvalid(obj.intervalMilliseconds), 1000, obj.intervalMilliseconds)
-    obj.port = b_iff(b_isInvalid(obj.port),  CreateObject("roMessagePort"), obj.port)
+    obj.port = b_iff(b_isInvalid(obj.port), CreateObject("roMessagePort"), obj.port)
 
     clock = CreateObject("roTimespan")
     lastCall = clock.TotalMilliseconds() + obj.durationMilliseconds
@@ -466,7 +466,7 @@ function b_toString(item) as string
         result = "["
         sep = ""
         for each arrItem in item
-            quot = b_iff(type(arrItem) = "String", "'","")
+            quot = b_iff(type(arrItem) = "String", "'", "")
             result = result + sep + quot + b_toString(arrItem) + quot
             sep = ","
         end for

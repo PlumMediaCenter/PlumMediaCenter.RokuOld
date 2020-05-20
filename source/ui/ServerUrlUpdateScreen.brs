@@ -26,7 +26,7 @@ function ServerUrlUpdateScreen() as dynamic
         ShowMessage("Success", "Successfully connected to the PlumMediaCenter Server at the specified url.")
         return true
     else
-        stillSave = Confirm("PlumMediaCenter Server does not exist at the provided url. Do you still want to use this url?","Yes","No")
+        stillSave = Confirm("PlumMediaCenter Server does not exist at the provided url. Do you still want to use this url?", "Yes", "No")
         if stillSave = true then
             print "PlumMediaCenter Server does not exist at the provided url. Setting url anyway. url=";serverUrl
             g_baseUrl(serverUrl)

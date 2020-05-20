@@ -5,15 +5,15 @@ function VideoGridTile(video)
         Rating: video.mpaa,
         ReleaseDate: video.year,
         onSelect: function()
-                VideoInfoScreen(m.video.videoId)
-            end function,
+            VideoInfoScreen(m.video.videoId)
+        end function,
         onPlay: function()
-                messageScreen = GetNewMessageScreen("Loading", "Playing video")
-                PlayVideo(m.video)
-                messageScreen.close()
-            end function
+            messageScreen = GetNewMessageScreen("Loading", "Playing video")
+            PlayVideo(m.video)
+            messageScreen.close()
+        end function
     })
-    
+
     'if the video has no poster, then the poster url is pointing to a relative path to the server.
     o.SDPosterUrl = b_iff(video.posterModifiedDate = invalid, b_concat(g_baseUrl(), video.sdPosterUrl), video.sdPosterUrl)
     o.HDPosterUrl = b_iff(video.posterModifiedDate = invalid, b_concat(g_baseUrl(), video.hdPosterUrl), video.hdPosterUrl)
@@ -28,7 +28,7 @@ function GetMediaTypeVideoGridTile(video)
         return TvShowGridTile(video)
     else if video.mediaType = "TvEpisode"
         return VideoGridTile(video)
-    else 
+    else
         return VideoGridTile(video)
     end if
 end function

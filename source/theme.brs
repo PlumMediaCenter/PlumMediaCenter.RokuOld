@@ -3,7 +3,7 @@
 '
 sub SetTheme()
     'these are the standard values used throughout the theme. Some of the different pages need to have the values re-set to override
-    'the defaults, so rather than changing the values twise, set the once here and reference them by value
+    'the defaults, so rather than changing the values twice, set the once here and reference them by value
     overhangSliceHD = "pkg:/images/overhang_hd.png"
     overhangSliceSD = "pkg:/images/overhang_sd.png"
     greyBackgroundColor = "#363636"

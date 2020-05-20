@@ -12,8 +12,8 @@ function SettingsScreen()
     list = []
     o = CreateObject("roAssociativeArray")
     o.Title = "Set PlumMediaCenter Server Url"
-    o.ShortDescriptionLine1  = "Point the app to the server url running PlumMediaCenter"
-    o.SDPosterUrl =  "pkg:/images/settings.sd.png"
+    o.ShortDescriptionLine1 = "Point the app to the server url running PlumMediaCenter"
+    o.SDPosterUrl = "pkg:/images/settings.sd.png"
     o.HDPosterUrl = "pkg:/images/settings.hd.png"
     o.action = function()
         ServerUrlUpdateScreen()
@@ -22,8 +22,8 @@ function SettingsScreen()
 
     o = CreateObject("roAssociativeArray")
     o.Title = "Auto-play"
-    o.ShortDescriptionLine1  = "Set the auto-play settings"
-    o.SDPosterUrl =  "pkg:/images/settings.sd.png"
+    o.ShortDescriptionLine1 = "Set the auto-play settings"
+    o.SDPosterUrl = "pkg:/images/settings.sd.png"
     o.HDPosterUrl = "pkg:/images/settings.hd.png"
     o.action = function()
         selectedIndex = 0
@@ -61,8 +61,8 @@ function SettingsScreen()
 
     o = CreateObject("roAssociativeArray")
     o.Title = "Back"
-    o.ShortDescriptionLine1  = "Return to the previous screen"
-    o.SDPosterUrl =  "pkg:/images/settings.sd.png"
+    o.ShortDescriptionLine1 = "Return to the previous screen"
+    o.SDPosterUrl = "pkg:/images/settings.sd.png"
     o.HDPosterUrl = "pkg:/images/settings.hd.png"
     list.Push(o)
 

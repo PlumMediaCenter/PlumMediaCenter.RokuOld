@@ -158,7 +158,7 @@ end function
 ' Prompts the user for a yes/no/cancel answer, returns the result
 ' @return integer  - 1 if the user chooses yes, 0 if the user chooses no, -1 if the user chooses cancel
 function ConfirmWithCancel(message = "Confirm", yesText = "Yes", noText = "No", cancelText = "Cancel") as integer
-    print b_concat("Confirming: '", message , "', '", yesText, "', ", noText, "', 'Cancel'", cancelText)
+    print b_concat("Confirming: '", message, "', '", yesText, "', ", noText, "', 'Cancel'", cancelText)
     port = CreateObject("roMessagePort")
     dialog = CreateObject("roMessageDialog")
     dialog.SetMessagePort(port)

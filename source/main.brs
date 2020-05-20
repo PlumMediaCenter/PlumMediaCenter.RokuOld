@@ -73,8 +73,8 @@ function compareVersionWithServer()
     serverMinor = Val(serverVersionParts[1])
 
     print concat("Comparing app version and server version: ", appVersion, " --- ", serverVersion)
-    print concat(appMajor, " < ", serverMajor, " or ", appMinor , " < ", serverMinor)
-    print concat(serverMajor, " < ", appMajor, " or ", serverMinor , " < ", appMinor)
+    print concat(appMajor, " < ", serverMajor, " or ", appMinor, " < ", serverMinor)
+    print concat(serverMajor, " < ", appMajor, " or ", serverMinor, " < ", appMinor)
     'if app is behind the server
     if appMajor < serverMajor or appMinor < serverMinor then
         print "app is behind server"

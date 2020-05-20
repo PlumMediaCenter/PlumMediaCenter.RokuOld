@@ -161,7 +161,7 @@ function API_GetVideo(videoId as integer) as object
     video = GetJSON(url)
     b_printc("Success. videoId: ", b_toString(video.videoId))
 
-    b_print(invalid, - 1)
+    b_print(invalid, -1)
     return video
 end function
 
@@ -184,14 +184,14 @@ function API_ToggleListInclusion(listName as string, videoId as integer)
 
     if isInList = true then
         'remove from list
-        url = b_concat(g_baseUrl(), "api/RemoveFromList.php?listName=", listName , "&videoIds=", videoId)
+        url = b_concat(g_baseUrl(), "api/RemoveFromList.php?listName=", listName, "&videoIds=", videoId)
     else
         'add to list
         url = b_concat(g_baseUrl(), "api/AddToList.php?listName=", listName, "&videoIds=", videoId)
     end if
     b_print(url)
     result = GetJSON(url)
-    b_print(b_concat("result", result), - 1)
+    b_print(b_concat("result", result), -1)
 end function
 
 '

@@ -39,7 +39,7 @@ function VideoInfoScreen(videoId as integer, selectedEpisodeId = invalid)
         o.ContentType = "episode"
         'trick the actors list into showing the episode title
         o.Actors = CreateObject("roArray", 10, true)
-        o.Actors.Push(b_concat("S" , episode.seasonNumber, ":E", episode.episodeNumber, " - ", episode.title))
+        o.Actors.Push(b_concat("S", episode.seasonNumber, ":E", episode.episodeNumber, " - ", episode.title))
         o.SDPosterUrl = episode.sdPosterUrl
         o.HDPosterUrl = episode.hdPosterUrl
         o.Description = episode.plot
@@ -100,7 +100,7 @@ function VideoInfoScreen(videoId as integer, selectedEpisodeId = invalid)
         end if
     end while
 
-    b_print(invalid, - 1)
+    b_print(invalid, -1)
     m.videoInfoScreen = invalid
     return -1
 end function
@@ -133,6 +133,6 @@ function SetButtons(video, startSeconds as integer)
     isInMyList = API_GetIsInList("My+List", video.videoId)
     m.videoInfoScreen.AddButton(m.toggle_list, b_iff(isInMyList, "Remove from my list", "Add to my list"))
 
-    m.videoInfoScreen.AddButton(m.back , "Back")
+    m.videoInfoScreen.AddButton(m.back, "Back")
 
 end function

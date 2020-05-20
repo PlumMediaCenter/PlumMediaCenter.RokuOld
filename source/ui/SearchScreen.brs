@@ -46,8 +46,8 @@ function loadSearchResults(searchTerm) as object
     results = API_GetSearchResults(searchTerm)
     m.searchResults = results
     m.searchTerm = searchTerm
-    numberOfResults =  b_size(results)
-    print concat("Search results for '",searchTerm,"': count: ",numberOfResults)
+    numberOfResults = b_size(results)
+    print concat("Search results for '", searchTerm, "': count: ", numberOfResults)
     MainGrid()
     messageScreen.Close()
 end function

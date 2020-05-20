@@ -45,11 +45,11 @@ function lib_GetGridScreenTvShow(video)
     'o.StarRating = "75"
     o.ReleaseDate = video.year
     o.TextAttrs = {
-        Color:"#FFCCCCCC",
-        Font:"Small",
-        HAlign:"HCenter",
-        VAlign:"VCenter",
-        Direction:"LeftToRight"
+        Color: "#FFCCCCCC",
+        Font: "Small",
+        HAlign: "HCenter",
+        VAlign: "VCenter",
+        Direction: "LeftToRight"
     }
     'o.Length = 5400
     o.Actors = []
