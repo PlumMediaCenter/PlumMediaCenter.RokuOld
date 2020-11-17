@@ -1,5 +1,7 @@
 {
     "strictTypeChecking": true,
+    "host": "192.168.1.104",
+    "password": "password",
     "files": [
         "manifest",
         "source/**/*.*",

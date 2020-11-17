@@ -1,22 +1,25 @@
 {
   "name": "plummediacenter.rokuold",
   "version": "1.0.0",
-  "description": "PlumMediaCenterRokuApp\r ======================",
+  "description": "PlumMediaCenterRokuApp",
   "main": "create-signed-package.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "bsc",
+    "watch": "bsc --watch",
+    "package": "node create-signed-package.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TwitchBronBron/PlumMediaCenterRokuApp.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/TwitchBronBron/PlumMediaCenterRokuApp/issues"
   },
   "homepage": "https://github.com/TwitchBronBron/PlumMediaCenterRokuApp#readme",
-  "dependencies": {
-    "roku-deploy": "^2.1.0-beta1"
+  "dependencies": {},
+  "devDependencies": {
+    "brighterscript": "^0.10.0"
   }
 }

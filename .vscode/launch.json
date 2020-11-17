@@ -5,10 +5,9 @@
             "type": "brightscript",
             "request": "launch",
             "name": "BrightScript Debug: Launch",
-            "host": "192.168.1.104",
-            "password": "password",
             "rootDir": "${workspaceFolder}",
             "consoleOutput": "normal",
+            "enableDebugProtocol": true,
             "stopOnEntry": false
         }
     ]
