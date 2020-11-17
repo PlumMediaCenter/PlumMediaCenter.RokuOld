@@ -278,7 +278,7 @@ function API_GetServerVersionNumber() as string
 end function
 
 function API_GetSearchSuggestions(searchString) as object
-    url = concat(g_baseUrl(), "api/GetSearchSuggestions.php?q=", searchString)
+    url = concat(g_baseUrl(), "api/GetSearchSuggestions.php?q=", b_escapeUrl(searchString))
     result = GetJSON(url)
     if result = invalid
         result = []
