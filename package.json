@@ -18,7 +18,9 @@
     "url": "https://github.com/TwitchBronBron/PlumMediaCenterRokuApp/issues"
   },
   "homepage": "https://github.com/TwitchBronBron/PlumMediaCenterRokuApp#readme",
-  "dependencies": {},
+  "dependencies": {
+    "roku-deploy": "^3.2.3"
+  },
   "devDependencies": {
     "brighterscript": "^0.10.0"
   }
