@@ -2,6 +2,10 @@
     "strictTypeChecking": true,
     "host": "192.168.1.30",
     "password": "1111",
+    "rootDir": "src",
+    "stagingFolderPath": "dist",
+    "createPackage": false,
+    "retainStagingFolder": true,
     "files": [
         "manifest",
         "source/**/*.*",

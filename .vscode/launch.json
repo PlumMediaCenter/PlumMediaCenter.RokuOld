@@ -5,9 +5,10 @@
             "type": "brightscript",
             "request": "launch",
             "name": "BrightScript Debug: Launch",
-            "rootDir": "${workspaceFolder}",
+            "rootDir": "${workspaceFolder}/dist",
             "consoleOutput": "normal",
-            "enableDebugProtocol": true,
+            "enableDebugProtocol": false,
+            "preLaunchTask": "build",
             "stopOnEntry": false
         }
     ]

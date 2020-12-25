@@ -22,6 +22,6 @@
     "roku-deploy": "^3.2.3"
   },
   "devDependencies": {
-    "brighterscript": "^0.20.1"
+    "brighterscript": "^0.22.1"
   }
 }
