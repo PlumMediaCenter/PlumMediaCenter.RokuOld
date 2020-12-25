@@ -1,0 +1,24 @@
+function DialogScreen(title, message = invalid, options = [])
+    dialog = CreateObject("roMessageDialog")
+    port = CreateObject("roMessagePort")
+    dialog.SetMessagePort(port)
+
+    dialog.SetTitle(title)
+    if message <> invalid then dialog.UpdateText(message)
+
+    for i = 0 to options.Count() - 1
+        dialog.AddButton(i, options[i])
+    end for
+
+    dialog.show()
+
+    'wait until the user selects an option
+    while True
+        message = wait(0, dialog.GetMessagePort())
+        if type(message) = "roMessageDialogEvent"
+            if message.isButtonPressed()
+                return options[message.GetIndex()]
+            end if
+        end if
+    end while
+end function

@@ -10,8 +10,6 @@ sub Main()
     'collect the message screens so we can close them all in one sweep, because it gets a bit jumpy otherwise
     messageScreens = []
 
-    FindServer("192.168.1.20")
-
     'make sure we have a url to the server
     CheckConfiguration()
     skipVersionComparison = false

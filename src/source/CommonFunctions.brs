@@ -12,10 +12,13 @@ end function
 '
 ' Add basic auth to all requests from this http agent (video player, grid, request, etc)
 '
-function SetAuthHeader(httpAgent) as object
+function SetAuthHeader(httpAgent, username = invalid, password = invalid) as object
+    if username = invalid then username = g_username()
+    if password = invalid then password = g_password()
+
     'assume all requests are protected by basic authentication
     ba = CreateObject("roByteArray")
-    header = b_concat(g_username(), ":", g_password())
+    header = b_concat(username, ":", password)
     ba.FromAsciiString(header)
     'ba.FromAsciiString("bronley:romantic")
     httpAgent.AddHeader("Authorization", "Basic " + ba.ToBase64String())
@@ -89,7 +92,7 @@ function GetNewMessageScreen(messageTitle = "", message = "") as object
     dialog.SetTitle(messageTitle)
     dialog.SetText(message)
     dialog.Show()
-    dialog.ShowBusyAnimation()
+    ' dialog.ShowBusyAnimation()
     return dialog
 end function
 
@@ -272,4 +275,9 @@ function arrayMerge(a = invalid, b = invalid, c = invalid, d = invalid, e = inva
         end if
     end for
     return result
+end function
+
+function getIpAddress()
+    info = CreateObject("roDeviceInfo")
+    return info.GetConnectionInfo().ip
 end function

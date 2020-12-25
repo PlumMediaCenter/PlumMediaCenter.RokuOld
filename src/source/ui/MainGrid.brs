@@ -52,24 +52,6 @@ function MainGrid()
     searchTitle = iff(m.searchTerm <> invalid, concat("Search Results for '", m.searchTerm, "'"), "Search")
     grid.addRow(searchTitle, searchList)
 
-    'loop through every other category and add a row for each
-
-    isFirstCategory = true
-    for each categoryName in categoryNames
-        category = categories[categoryName]
-        categoryTitle = iff(category.title <> invalid, category.title, category.name)
-
-        'skip the first one since it is the 'recently watched' category
-        if isFirstCategory then
-            isFirstcategory = false
-        else
-            'only add this category if it has videos
-            if category.videos.Count() > 0 then
-                grid.addRow(categoryTitle, GetMediaTypeVideoGridTiles(category.videos))
-            end if
-        end if
-    end for
-
     '
     ' Add settings
     '
@@ -112,6 +94,24 @@ function MainGrid()
     }))
 
     grid.addRow("Settings", settingsList)
+
+    'loop through every other category and add a row for each
+
+    isFirstCategory = true
+    for each categoryName in categoryNames
+        category = categories[categoryName]
+        categoryTitle = iff(category.title <> invalid, category.title, category.name)
+
+        'skip the first one since it is the 'recently watched' category
+        if isFirstCategory then
+            isFirstcategory = false
+        else
+            'only add this category if it has videos
+            if category.videos.Count() > 0 then
+                grid.addRow(categoryTitle, GetMediaTypeVideoGridTiles(category.videos))
+            end if
+        end if
+    end for
 
     grid.draw(roGridScreen)
 

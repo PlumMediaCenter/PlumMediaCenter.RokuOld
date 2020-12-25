@@ -1,10 +1,25 @@
 function ServerUrlUpdateScreen() as dynamic
+    'get username from user
     g_username(GetText("Username", "Enter your username", g_username()))
+
+    'get password from user
     g_password(GetText("Password", "Enter your password", g_password()))
-    serverUrl = g_baseUrl()
+
+    print "Asking user if they want to scan network to find server"
+    option = DialogScreen("Find Server Automatically?", "Would you like to scan the network automatically for a PlumMediaCenter server?", ["Yes", "No, enter the URL manually"])
+    if option = "Yes" then
+        serverUrl = FindServer(getIpAddress(), g_username(), g_password())
+        if serverUrl = invalid then
+            b_alert("Could not find a PlumMediaCenter server on your network. Please enter the address manually")
+        end if
+    else
+        serverUrl = g_baseUrl()
+    end if
+
     if serverUrl = invalid then
         serverUrl = "http://bronley.no-ip.biz:8080/PlumMediaCenter/"
     end if
+
     serverUrl = GetText("PlumMediaCenter Server URL", "Enter the url for the server running PlumMediaCenter.", serverUrl)
     'if the base url is missing the ending slash, add it
     endingCharacter = serverUrl.Right(1)
@@ -54,14 +69,16 @@ function GetText(title as string, displayText as string, defaultText = "") as dy
         msg = wait(0, screen.GetMessagePort())
         print "message received: ";msg
         if type(msg) = "roKeyboardScreenEvent" then
-            if msg.isScreenClosed() then
-                return invalid
-            else if msg.isButtonPressed() then
+            if msg.isButtonPressed() then
                 if msg.GetIndex() = 1 then
                     return screen.GetText()
                 end if
+            else if msg.isScreenClosed() then
+                return invalid
+            else
             end if
         end if
     end while
     return invalid
 end function
+

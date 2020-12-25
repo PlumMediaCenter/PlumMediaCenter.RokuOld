@@ -1,0 +1,82 @@
+'
+' A very crude device discovery method. Sends an HTTP request to each matching IP address
+' @param ipAddress - the ip address to use. (should default to the current IP range from this device, unless the user has customized it)
+' @param port - the port to test. defaults to 8080 (which is what PlumMediaCenter uses)
+'
+function FindServer(ipAddress, username, password, port = 8080)
+    print `Creating the "Scanning network" screen`
+    loadingScreen = GetNewMessageScreen("Scanning network", "Initializing")
+    parts = ipAddress.split(".")
+    if parts.count() <> 4 then
+        'can't find server because ip address is invalid
+        return invalid
+    end if
+
+    requests = []
+    print "Sending the requests"
+    for i = 0 to 255 step 1
+        req = {
+            baseUrl: `http://${parts[0]}.${parts[1]}.${parts[2]}.${i}:${port}/PlumMediaCenter/`,
+            port: CreateObject("roMessagePort"),
+            xfer: CreateObject("roUrlTransfer")
+        }
+
+        req.xfer.SetUrl(`${req.baseUrl}api/IsAlive.php`)
+        req.xfer.SetPort(req.port)
+        req.xfer.RetainBodyOnError(true)
+        SetAuthHeader(req.xfer, username, password)
+
+        'run the request
+        req.xfer.AsyncGetToString()
+
+        'save for later
+        requests.Push(req)
+    end for
+    print "All requests sent. Now waiting for them to finish"
+
+    foundServers = []
+    'check all of the responses
+    for each req in requests
+        loadingScreen.UpdateText(`Checking ${req.baseUrl}`)
+
+        event = invalid
+        'wait for a response from the port
+        while true
+            event = req.port.GetMessage()
+            if type(event) = "roUrlEvent"
+                exit while
+            end if
+        end while
+
+        responseBody = event.GetString()
+        if responseBody = "true" then
+            print `Found server at: ${req.baseUrl}`
+            loadingScreen.addButton(foundServers.Count(), req.baseUrl)
+            loadingScreen.UpdateText(`Found PlumMediaCenter server at ${req.baseUrl}`)
+            'we found a pmc instance
+            foundServers.push(req.baseUrl)
+        end if
+    end for
+
+    selectedServer = invalid
+    if foundServers.Count() = 1 then
+        selectedServer = foundServers[0]
+    else if foundServers.Count() > 1 then
+        'wait for the user to pick
+        loadingScreen.UpdateText(`Which server do you wish to use?`)
+        port = CreateObject("roMessagePort")
+        loadingScreen.SetPort(port)
+        while True
+            message = wait(0, dialog.GetMessagePort())
+            if type(message) = "roMessageDialogEvent"
+                if message.isButtonPressed()
+                    selectedServer = foundServers[message.GetIndex()]
+                end if
+            end if
+        end while
+    end if
+
+    loadingScreen.Close()
+
+    return selectedServer
+end function
