@@ -6,7 +6,7 @@
   "scripts": {
     "build": "bsc",
     "watch": "bsc --watch",
-    "package": "node create-signed-package.js"
+    "package": "npm run build && node create-signed-package.js"
   },
   "repository": {
     "type": "git",

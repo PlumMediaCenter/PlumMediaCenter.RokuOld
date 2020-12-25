@@ -21,7 +21,7 @@ function FindServer(ipAddress, username, password, port = 8080)
             xfer: CreateObject("roUrlTransfer")
         }
 
-        req.xfer.SetUrl(`${req.baseUrl}api/IsAlive.php`)
+        req.xfer.SetUrl(req.baseUrl + "api/IsAlive.php")
         req.xfer.SetPort(req.port)
         req.xfer.RetainBodyOnError(true)
         SetAuthHeader(req.xfer, username, password)
